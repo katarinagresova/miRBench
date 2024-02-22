@@ -1,0 +1,95 @@
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import argparse
+
+def one_hot_encode(seq):
+    if len(seq) == 0:
+        return []
+    """ 1-hot encode ATCG sequence """
+    nt_dict = {
+        'A': 0,
+        'T': 1,
+        'C': 2,
+        'G': 3,
+        'X': 4
+    }
+    targets = np.ones([5, 4]) / 4.0
+    targets[:4, :] = np.eye(4)
+    seq = [nt_dict[nt] for nt in seq]
+    return list(targets[seq].flatten())
+
+def predict(load_model, df, miRNA_col, gene_col):
+    # load trained model 
+    tf.compat.v1.reset_default_graph()
+    with tf.compat.v1.Session() as sess:
+
+        sess.run(tf.compat.v1.global_variables_initializer())
+        saver = tf.compat.v1.train.import_meta_graph(load_model + '.meta')
+        print('Restoring from {}'.format(load_model))
+        saver.restore(sess, load_model)
+
+        _dropout_rate = tf.compat.v1.get_default_graph().get_tensor_by_name('dropout_rate:0')
+        _phase_train = tf.compat.v1.get_default_graph().get_tensor_by_name('phase_train:0')
+        _combined_x = tf.compat.v1.get_default_graph().get_tensor_by_name('combined_x:0')
+        _prediction = tf.compat.v1.get_default_graph().get_tensor_by_name('final_layer/pred_ka:0')
+
+        #num_batches = 64
+        #batch_size = 1
+
+        #num_batches = len(seqs) // batch_size
+        #print("Number of batches: ", num_batches)
+
+        #results = []
+        preds = []
+
+        for seq_id in range(len(df)):
+            #print("Processing {}/{}...".format((batch+1)*batch_size, 438784))
+            #seqs = kmers[batch*batch_size: (batch+1) * batch_size]
+
+            #batch_seqs = seqs[batch*batch_size: (batch+1) * batch_size]
+
+            input_data = []
+            for sub_seq in [df.iloc[seq_id][gene_col][i:i+12] for i in range(len(df.iloc[seq_id][gene_col])-11)]: # sliding window
+                seq_one_hot = one_hot_encode(sub_seq)
+                mirseq_one_hot = one_hot_encode(df.iloc[seq_id][miRNA_col][:10])
+                input_data.append(np.outer(mirseq_one_hot, seq_one_hot))
+
+            input_data = np.stack(input_data)
+
+            feed_dict = {
+                            _dropout_rate: 0.0,
+                            _phase_train: False,
+                            _combined_x: input_data
+                        }
+
+            #pred_kds = -1 * sess.run(_prediction, feed_dict=feed_dict).flatten()
+            pred_kds = sess.run(_prediction, feed_dict=feed_dict).flatten()
+
+            #results.append(pred_kds)
+            preds.append(max(pred_kds))
+
+    return preds
+
+if __name__ == '__main__':
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description='TargetScan prediction.')
+    # Path to the input file 
+    parser.add_argument('--input', type=str, help='Path to the input file - miRNA and a gene sequence in a tab-separated format.')
+    # Name of column containing miRNA sequences
+    parser.add_argument('--miRNA_column', type=str, help='Name of the column containing miRNA sequences')
+    # Name of column containing gene sequences
+    parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences')
+    # Path to the output file
+    parser.add_argument('--output', type=str, help='Path to the output file')
+    # Path to the trained model
+    parser.add_argument('--model', type=str, help='Path to the trained model')
+    # Parse the arguments
+    args = parser.parse_args()
+
+    # Read the input file
+    data = pd.read_csv(args.input, sep='\t')
+
+    preds = predict(args.model, data, args.miRNA_column, args.gene_column)
+    data['targetscan_cnn'] = preds
+    data.to_csv(args.output, sep='\t', index=False)
