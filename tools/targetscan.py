@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import tensorflow as tf
 import argparse
+import os
+import urllib.request
 
 def one_hot_encode(seq):
     if len(seq) == 0:
@@ -71,6 +73,26 @@ def predict(load_model, df, miRNA_col, gene_col):
 
     return preds
 
+def get_model_path():
+    current_path = os.path.realpath(__file__)
+    model_dir_path = os.path.join(os.path.dirname(current_path), '../models/TargetScan_CNN')
+    if not os.path.exists(model_dir_path):
+        os.mkdir(model_dir_path)
+
+    model_path = os.path.join(model_dir_path, 'model-100')
+    if os.path.exists(model_path + '.meta'):
+        return model_path
+
+    print('Downloading the model...')
+    url = 'https://github.com/katarinagresova/miRNA_models/raw/master/cnn/trained_model/model-100.data-00000-of-00001'
+    urllib.request.urlretrieve(url, model_path + '.data-00000-of-00001')
+    url = 'https://github.com/katarinagresova/miRNA_models/raw/master/cnn/trained_model/model-100.index'
+    urllib.request.urlretrieve(url, model_path + '.index')
+    url = 'https://github.com/katarinagresova/miRNA_models/raw/master/cnn/trained_model/model-100.meta'
+    urllib.request.urlretrieve(url, model_path + '.meta')
+
+    return model_path
+
 if __name__ == '__main__':
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='TargetScan prediction.')
@@ -82,14 +104,13 @@ if __name__ == '__main__':
     parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences')
     # Path to the output file
     parser.add_argument('--output', type=str, help='Path to the output file')
-    # Path to the trained model
-    parser.add_argument('--model', type=str, help='Path to the trained model')
     # Parse the arguments
     args = parser.parse_args()
 
     # Read the input file
     data = pd.read_csv(args.input, sep='\t')
 
-    preds = predict(args.model, data, args.miRNA_column, args.gene_column)
+    model_path = get_model_path()
+    preds = predict(model_path, data, args.miRNA_column, args.gene_column)
     data['targetscan_cnn'] = preds
     data.to_csv(args.output, sep='\t', index=False)
