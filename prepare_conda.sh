@@ -11,3 +11,4 @@ pip install seaborn
 pip install scikit-learn
 pip install scipy
 pip install gdown
+pip install viennarna
