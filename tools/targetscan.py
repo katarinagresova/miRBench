@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
 import tensorflow as tf
-import argparse
 import os
 import urllib.request
+
+from utils import parse_args
 
 def one_hot_encode(seq):
     if len(seq) == 0:
@@ -94,20 +95,8 @@ def get_model_path():
     return model_path
 
 if __name__ == '__main__':
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description='TargetScan prediction.')
-    # Path to the input file 
-    parser.add_argument('--input', type=str, help='Path to the input file - miRNA and a gene sequence in a tab-separated format.')
-    # Name of column containing miRNA sequences
-    parser.add_argument('--miRNA_column', type=str, help='Name of the column containing miRNA sequences')
-    # Name of column containing gene sequences
-    parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences')
-    # Path to the output file
-    parser.add_argument('--output', type=str, help='Path to the output file')
-    # Parse the arguments
-    args = parser.parse_args()
+    args = parse_args('TargetScan CNN')
 
-    # Read the input file
     data = pd.read_csv(args.input, sep='\t')
 
     model_path = get_model_path()

@@ -1,11 +1,11 @@
-import argparse
 import os
 import urllib.request 
-import numpy as np
 import pandas as pd
 from tensorflow import keras as k
 from tensorflow.keras import layers
 from tensorflow.keras.utils import register_keras_serializable
+
+from utils import parse_args, one_hot_encoding
 
 @register_keras_serializable()
 class ResBlock(layers.Layer):
@@ -63,34 +63,6 @@ class ResBlock(layers.Layer):
         return {'filters': self.filters, 'downsample': self.downsample, 'kernel_size': self.kernel_size}
     
 
-def one_hot_encoding(df, miRNA_col, gene_col, tensor_dim=(50, 20, 1)):
-    """
-    fun encodes miRNAs and mRNAs in df into binding matrices
-    :param df: dataframe containing 'gene' and 'miRNA' columns
-    :param tensor_dim: output shape of the matrix
-    :return: numpy array of predictions
-    """
-
-    miRNA_length = 20
-    gene_length = 50
-
-    # alphabet for watson-crick interactions.
-    alphabet = {"AT": 1., "TA": 1., "GC": 1., "CG": 1., "AU": 1., "UA": 1.}
-    # create empty main 2d matrix array
-    N = df.shape[0]  # number of samples in df
-    shape_matrix_2d = (N, *tensor_dim)  # 2d matrix shape
-    # initialize dot matrix with zeros
-    ohe_matrix_2d = np.zeros(shape_matrix_2d, dtype="float32")
-
-    # compile matrix with watson-crick interactions.
-    for index, row in df.iterrows():
-        for bind_index, bind_nt in enumerate(row[gene_col][:gene_length].upper()):
-            for mirna_index, mirna_nt in enumerate(row[miRNA_col][:miRNA_length].upper()):
-                base_pairs = bind_nt + mirna_nt
-                ohe_matrix_2d[index, bind_index, mirna_index, 0] = alphabet.get(base_pairs, 0)
-
-    return ohe_matrix_2d
-
 def predict_probs(df, miRNA_col, gene_col, model):
     """
     fun predicts the probability of miRNA:target site binding in df file
@@ -119,18 +91,7 @@ def get_model_path():
 
 if __name__ == '__main__':
     
-    # Parse command line arguments
-    parser = argparse.ArgumentParser(description='miRBind prediction.')
-    # Path to the input file 
-    parser.add_argument('--input', type=str, help='Path to the input file - miRNA and a gene sequence in a tab-separated format.', required=True)
-    # Name of column containing miRNA sequences
-    parser.add_argument('--miRNA_column', type=str, help='Name of the column containing miRNA sequences', required=True)
-    # Name of column containing gene sequences
-    parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences', required=True)
-    # Path to the output file
-    parser.add_argument('--output', type=str, help='Path to the output file', required=True)
-    # Parse the arguments
-    args = parser.parse_args()
+    args = parse_args('miRBind')
 
     # Read the input file
     data = pd.read_csv(args.input, sep='\t')
