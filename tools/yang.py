@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import numpy as np
 import os
 
-from utils import parse_args
+from utils import parse_args, get_model_path
 
 miRNA_MAXLEN = 30
 mRNA_MAXLEN = 40
@@ -164,22 +164,6 @@ class BaseLine7(nn.Module):
         
         return out
 
-def get_model_path():
-    current_path = os.path.realpath(__file__)
-    model_dir_path = os.path.join(os.path.dirname(current_path), '../' 'models/Yang_Attention')
-    if not os.path.exists(model_dir_path):
-        os.mkdir(model_dir_path)
-
-    model_path = os.path.join(model_dir_path, 'attention_model.pkl')
-    if os.path.exists(model_path):
-        return model_path
-
-    print('Downloading the model...')
-    # TODO: add downloading the model after we have it on GitHub
-    # url = 'https://github.com/'
-    # urllib.request.urlretrieve(url, model_path)
-
-    return model_path
 
 def get_model(model_path, device):
 
@@ -246,7 +230,11 @@ if __name__ == '__main__':
 
     data = pd.read_csv(args.input, sep='\t')
 
-    model_path = get_model_path()
+    model_path = get_model_path(
+        folder = '../models/Yang_Attention', 
+        model_name = 'attention_model.pkl', 
+        url = ''
+    )
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = get_model(model_path, device)
 

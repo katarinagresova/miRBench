@@ -1,5 +1,7 @@
 import argparse
 import numpy as np
+import os
+import urllib.request
 
 def parse_args(tool_name):
     parser = argparse.ArgumentParser(description=tool_name + ' prediction.')
@@ -36,3 +38,18 @@ def one_hot_encoding(df, miRNA_col, gene_col, tensor_dim=(50, 20, 1)):
                 ohe_matrix_2d[index, bind_index, mirna_index, 0] = alphabet.get(base_pairs, 0)
 
     return ohe_matrix_2d
+
+def get_model_path(folder, model_name, url):
+    current_path = os.path.realpath(__file__)
+    model_dir_path = os.path.join(os.path.dirname(current_path), folder)
+    if not os.path.exists(model_dir_path):
+        os.mkdir(model_dir_path)
+
+    model_path = os.path.join(model_dir_path, model_name)
+    if os.path.exists(model_path):
+        return model_path
+
+    print('Downloading the model...')
+    urllib.request.urlretrieve(url, model_path)
+
+    return model_path

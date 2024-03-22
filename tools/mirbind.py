@@ -5,7 +5,7 @@ from tensorflow import keras as k
 from tensorflow.keras import layers
 from tensorflow.keras.utils import register_keras_serializable
 
-from utils import parse_args, one_hot_encoding
+from utils import parse_args, one_hot_encoding, get_model_path
 
 @register_keras_serializable()
 class ResBlock(layers.Layer):
@@ -73,22 +73,6 @@ def predict_probs(df, miRNA_col, gene_col, model):
     ohe = one_hot_encoding(df, miRNA_col, gene_col)
     return model.predict(ohe)[:, 1]
 
-def get_model_path():
-    current_path = os.path.realpath(__file__)
-    model_dir_path = os.path.join(os.path.dirname(current_path), '../' 'models/miRBind')
-    if not os.path.exists(model_dir_path):
-        os.mkdir(model_dir_path)
-
-    model_path = os.path.join(model_dir_path, 'miRBind.h5')
-    if os.path.exists(model_path):
-        return model_path
-
-    print('Downloading the model...')
-    url = 'https://github.com/ML-Bioinfo-CEITEC/miRBind/raw/main/Models/miRBind.h5'
-    urllib.request.urlretrieve(url, model_path)
-
-    return model_path
-
 if __name__ == '__main__':
     
     args = parse_args('miRBind')
@@ -96,7 +80,11 @@ if __name__ == '__main__':
     # Read the input file
     data = pd.read_csv(args.input, sep='\t')
 
-    model_path = get_model_path()
+    model_path = get_model_path(
+        folder = '../models/miRBind', 
+        model_name = 'miRBind.h5', 
+        url = 'https://github.com/ML-Bioinfo-CEITEC/miRBind/raw/main/Models/miRBind.h5'
+    )
     model = k.models.load_model(model_path)
 
     preds = predict_probs(data, args.miRNA_column, args.gene_column, model)
