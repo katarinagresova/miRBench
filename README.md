@@ -7,10 +7,10 @@ Setup conda environment
 
 Download data
 ```bash
-python src/data.py [--helwak] [--hejret] [--klimentova]
+python src/data.py <data_folder_path> [--helwak] [--hejret] [--klimentova]
 ```
 
-Data will be downloaded to `data/` directory, under separate subdirectories for each dataset.
+Data will be downloaded to `data_folder_path/` directory, under separate subdirectories for each dataset.
 
 Run some tool, for example TargetScan CNN:
 ```bash

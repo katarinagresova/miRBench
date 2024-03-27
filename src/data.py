@@ -10,7 +10,7 @@ def download_helwak(folder_path):
 
     data_dir = os.path.join(folder_path, "Helwak_2013")
     if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
+        os.mkdir(data_dir, parents=True)
 
     for ratio in [1, 10, 100]:
         url = f"https://github.com/ML-Bioinfo-CEITEC/miRBind/raw/main/Datasets/test_set_1_{ratio}_CLASH2013_paper.tsv"
@@ -24,7 +24,7 @@ def download_hejret(folder_path):
 
     data_dir = os.path.join(folder_path, "Hejret_2023")
     if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
+        os.mkdir(data_dir, parents=True)
 
     for ratio in [1, 10, 100]:
         for smallRNA in ['miRNA', 'miRNA_real_seq', 'tRNA', 'yRNA']:
@@ -39,7 +39,7 @@ def download_klimentova(folder_path):
 
     data_dir = os.path.join(folder_path, "Klimentova_2022")
     if not os.path.exists(data_dir):
-        os.mkdir(data_dir)
+        os.mkdir(data_dir, parents=True)
 
     url = "https://drive.google.com/file/d/18IXpYEFjrWCVF-eJtj28Ezk4HLy-K-FZ/view?usp=sharing"
     filename = os.path.join(data_dir, "miRNA_test_set_1.tsv")
