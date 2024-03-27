@@ -81,7 +81,7 @@ if __name__ == '__main__':
     data = pd.read_csv(args.input, sep='\t')
 
     model_path = get_model_path(
-        folder = '../models/miRBind', 
+        folder = 'miRBind', 
         model_name = 'miRBind.h5', 
         url = 'https://github.com/ML-Bioinfo-CEITEC/miRBind/raw/main/Models/miRBind.h5'
     )

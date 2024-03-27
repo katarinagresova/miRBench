@@ -94,7 +94,7 @@ if __name__ == '__main__':
     data = pd.read_csv(args.input, sep="\t")
 
     model_path = get_model_path(
-        folder = '../models/cnnMirTarget', 
+        folder = 'cnnMirTarget', 
         model_name = 'cnn_model_preTrained.h5', 
         url = 'https://github.com/zhengxueming/cnnMirTarget/raw/master/data/cnn_model_preTrained.h5')
 

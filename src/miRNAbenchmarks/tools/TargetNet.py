@@ -108,7 +108,7 @@ if __name__ == '__main__':
     print("Data prepared")
 
     model_path = get_model_path(
-        folder = '../models/TargetNet', 
+        folder = 'TargetNet', 
         model_name = 'TargetNet.pt', 
         url = 'https://github.com/katarinagresova/TargetNet/raw/master/pretrained_models/TargetNet.pt'
     )

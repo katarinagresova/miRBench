@@ -22,7 +22,7 @@ if __name__ == '__main__':
     data = pd.read_csv(args.input, sep='\t')
 
     model_path = get_model_path(
-        folder = '../models/Hejret_miRNA_CNN', 
+        folder = 'Hejret_miRNA_CNN', 
         model_name = 'model_miRNA.h5', 
         url = 'https://github.com/ML-Bioinfo-CEITEC/HybriDetector/raw/main/ML/Models/model_miRNA.h5'
     )

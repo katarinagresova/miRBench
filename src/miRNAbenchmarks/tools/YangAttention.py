@@ -231,7 +231,7 @@ if __name__ == '__main__':
     data = pd.read_csv(args.input, sep='\t')
 
     model_path = get_model_path(
-        folder = '../models/Yang_Attention', 
+        folder = 'Yang_Attention', 
         model_name = 'attention_model.pkl', 
         url = ''
     )
