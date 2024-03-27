@@ -3,12 +3,12 @@ import os
 import urllib.request
 import gdown
 
-def download_helwak():
+def download_helwak(folder_path):
     """
     Download Helwak 2013 Ago1-CLASH dataset
     """
 
-    data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "Helwak_2013")
+    data_dir = os.path.join(folder_path, "Helwak_2013")
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
 
@@ -17,12 +17,12 @@ def download_helwak():
         filename = os.path.join(data_dir, f"miRNA_test_set_{ratio}.tsv")
         urllib.request.urlretrieve(url, filename)
 
-def download_hejret():
+def download_hejret(folder_path):
     """
     Download Hejret 2023 Ago2-CLASH dataset
     """
 
-    data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "Hejret_2023")
+    data_dir = os.path.join(folder_path, "Hejret_2023")
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
 
@@ -32,12 +32,12 @@ def download_hejret():
             filename = os.path.join(data_dir, f"{smallRNA}_test_set_{ratio}.tsv")
             urllib.request.urlretrieve(url, filename)
 
-def download_klimentova():
+def download_klimentova(folder_path):
     """
     Download Klimentova 2022 Ago2-eCLIP dataset
     """
 
-    data_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "Klimentova_2022")
+    data_dir = os.path.join(folder_path, "Klimentova_2022")
     if not os.path.exists(data_dir):
         os.mkdir(data_dir)
 
@@ -59,6 +59,7 @@ def download_klimentova():
 
 def main():
     parser = argparse.ArgumentParser(description="Download datasets")
+    parser.add_argument("--path", type=str, help="Path to the directory where the datasets will be downloaded")
     parser.add_argument("--helwak", action="store_true", help="Download Helwak 2013 Ago1-CLASH dataset")
     parser.add_argument("--hejret", action="store_true", help="Download Hejret 2023 Ago2-CLASH dataset")
     parser.add_argument("--klimentova", action="store_true", help="Download Klimentova 2022 Ago2-eCLIP dataset")
@@ -66,11 +67,11 @@ def main():
     args = parser.parse_args()
 
     if args.helwak:
-        download_helwak()
+        download_helwak(args.path)
     if args.hejret:
-        download_hejret()
+        download_hejret(args.path)
     if args.klimentova:
-        download_klimentova()
+        download_klimentova(args.path)
     
 if __name__ == "__main__":
     main()

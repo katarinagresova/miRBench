@@ -7,7 +7,7 @@ Setup conda environment
 
 Download data
 ```bash
-python data/download_data.py [--helwak] [--hejret] [--klimentova]
+python src/data.py [--helwak] [--hejret] [--klimentova]
 ```
 
 Data will be downloaded to `data/` directory, under separate subdirectories for each dataset.
