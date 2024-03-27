@@ -10,7 +10,7 @@ from targetnet.utils import set_seeds
 from targetnet.model.model_utils import get_model
 from targetnet.data import extended_seed_alignment, encode_RNA
 
-from utils import parse_args, get_model_path
+from miRNAbenchmarks.utils import parse_args, get_model_path
 
 class ModelConfig():
     def __init__(self, cfg, idx="model_config"):
@@ -59,7 +59,7 @@ def prepare_dataset(df, miRNA_col, gene_col, with_esa = True):
         X.append(torch.from_numpy(encode_RNA(mirna_seq, mirna_esa,
                                                 mrna_seq, cts_rev_esa, with_esa)))
 
-    dataset = miRNA_CTS_dataset(X)#, set_idxs)
+    dataset = miRNA_CTS_dataset(X)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=False)
 
     return dataloader
@@ -116,6 +116,6 @@ if __name__ == '__main__':
     print('Model loaded')
 
     preds = predict(model, dataloader)
-    data['targetnet'] = preds
+    data['TargetNet'] = preds
 
     data.to_csv(args.output, sep='\t', index=False)

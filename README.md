@@ -7,14 +7,14 @@ Setup conda environment
 
 Download data
 ```bash
-python src/data.py <data_folder_path> [--helwak] [--hejret] [--klimentova]
+python src/miRNAbenchmarks/data.py <data_folder_path> [--helwak] [--hejret] [--klimentova]
 ```
 
 Data will be downloaded to `data_folder_path/` directory, under separate subdirectories for each dataset.
 
 Run some tool, for example TargetScan CNN:
 ```bash
-python tools/targetscan.py \
+python src/miRNAbenchmarks/tools/targetscan.py \
     --input [PATH_TO_INPUT_DATA_TSV] \
     --miRNA_column miRNA \
     --gene_column gene \

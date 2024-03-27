@@ -5,7 +5,7 @@ from tensorflow import keras as k
 from tensorflow.keras import layers
 from tensorflow.keras.utils import register_keras_serializable
 
-from utils import parse_args, one_hot_encoding, get_model_path
+from miRNAbenchmarks.utils import parse_args, one_hot_encoding, get_model_path
 
 @register_keras_serializable()
 class ResBlock(layers.Layer):
@@ -89,6 +89,6 @@ if __name__ == '__main__':
 
     preds = predict_probs(data, args.miRNA_column, args.gene_column, model)
 
-    data['mirbind'] = preds
+    data['miRBind'] = preds
 
     data.to_csv(args.output, sep='\t', index=False)

@@ -4,7 +4,7 @@ import tensorflow as tf
 import os
 import urllib.request
 
-from utils import parse_args
+from miRNAbenchmarks.utils import parse_args
 
 def one_hot_encode(seq):
     if len(seq) == 0:
@@ -101,5 +101,5 @@ if __name__ == '__main__':
 
     model_path = get_model_path()
     preds = predict(model_path, data, args.miRNA_column, args.gene_column)
-    data['targetscan_cnn'] = preds
+    data['TargetScanCnn'] = preds
     data.to_csv(args.output, sep='\t', index=False)

@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import numpy as np
 import os
 
-from utils import parse_args, get_model_path
+from miRNAbenchmarks.utils import parse_args, get_model_path
 
 miRNA_MAXLEN = 30
 mRNA_MAXLEN = 40
@@ -239,6 +239,6 @@ if __name__ == '__main__':
     model = get_model(model_path, device)
 
     preds = predict(model, data, args.miRNA_column, args.gene_column, device)
-    data['yang'] = preds
+    data['YangAttention'] = preds
 
     data.to_csv(args.output, sep='\t', index=False)

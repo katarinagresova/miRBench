@@ -1,7 +1,7 @@
 import pandas as pd
 import RNA
 
-from utils import parse_args
+from miRNAbenchmarks.utils import parse_args
 
 def predict(data, miRNA_column, gene_column):
     return -1 * RNA.cofold(data[miRNA_column] + "&" + data[gene_column])[1]

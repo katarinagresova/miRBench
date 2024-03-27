@@ -3,12 +3,33 @@ import numpy as np
 import os
 import urllib.request
 
+NAMING = {
+    "cnnMirTarget": "cnnMirTarget",
+    "cofold": "RNAcofold",
+    "HejretMirnaCnn": "Hejret miRNA CNN",
+    "miRBind": "miRBind",
+    "seed": "Seed",
+    "TargetNet": "TargetNet",
+    "TargetScanCnn": "TargetScan CNN",
+    "YangAttention": "Yang Attention"
+}
+
+DATASET_CONFIG = {
+    "Hejret_2023": {
+        "path": "/home/jovyan/miRNA_benchmarks/data/Hejret_2023/",
+        "sRNA": ["miRNA", "tRNA", "yRNA"],
+        "ratios": [1, 10, 100],
+        "sRNA_col": "noncodingRNA",
+        "gene_col": "gene"
+    }
+}
+
 def parse_args(tool_name):
     parser = argparse.ArgumentParser(description=tool_name + ' prediction.')
-    parser.add_argument('--input', type=str, help='Path to the input file - miRNA and a gene sequence in a tab-separated format.')
-    parser.add_argument('--miRNA_column', type=str, help='Name of the column containing miRNA sequences')
-    parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences')
-    parser.add_argument('--output', type=str, help='Path to the output file')
+    parser.add_argument('--input', type=str, help='Path to the input file - miRNA and a gene sequence in a tab-separated format.', required=True)
+    parser.add_argument('--miRNA_column', type=str, help='Name of the column containing miRNA sequences', required=True)
+    parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences', required=True)
+    parser.add_argument('--output', type=str, help='Path to the output file', required=True)
     return parser.parse_args()
 
 def one_hot_encoding(df, miRNA_col, gene_col, tensor_dim=(50, 20, 1)):

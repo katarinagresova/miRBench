@@ -1,6 +1,6 @@
 import pandas as pd
 
-from utils import parse_args
+from miRNAbenchmarks.utils import parse_args
 
 def rev_compl(st):
     nn = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
