@@ -2,6 +2,7 @@ import argparse
 import os
 import urllib.request
 import gdown
+import pandas as pd
 
 def download_helwak(folder_path):
     """
@@ -16,6 +17,10 @@ def download_helwak(folder_path):
         url = f"https://github.com/ML-Bioinfo-CEITEC/miRBind/raw/main/Datasets/test_set_1_{ratio}_CLASH2013_paper.tsv"
         filename = os.path.join(data_dir, f"miRNA_test_set_{ratio}.tsv")
         urllib.request.urlretrieve(url, filename)
+
+        df = pd.read_csv(filename, sep="\t")
+        df.rename(columns={"miRNA": "noncodingRNA"}, inplace=True)
+        df.to_csv(filename, sep="\t", index=False)
 
 def download_hejret(folder_path):
     """
