@@ -1,20 +1,31 @@
 # miRNA Benchmarks
 
-Setup conda environment
+## Setup conda environment
+
+Use prepared script to create conda environment with all necessary dependencies:
 ```bash
 . prepare_conda.sh
 ```
 
-Download data
+Or create conda environment manually:
 ```bash
-python src/miRNAbenchmarks/data.py <data_folder_path> [--helwak] [--hejret] [--klimentova]
+conda create -n benchmarks -f environment.yml
+conda activate benchmarks
 ```
 
-Data will be downloaded to `data_folder_path/` directory, under separate subdirectories for each dataset.
+## Download data
+
+```bash
+python src/miRNAbenchmarks/data.py <DATA_FOLDER_PATH> [--helwak] [--hejret] [--klimentova]
+```
+
+Data will be downloaded to `DATA_FOLDER_PATH/` directory, under separate subdirectories for each dataset.
+
+## Run tools
 
 Run some tool, for example TargetScan CNN:
 ```bash
-python src/miRNAbenchmarks/tools/targetscan.py \
+python src/miRNAbenchmarks/tools/TargetScanCnn.py \
     --input [PATH_TO_INPUT_DATA_TSV] \
     --miRNA_column miRNA \
     --gene_column gene \
@@ -22,3 +33,15 @@ python src/miRNAbenchmarks/tools/targetscan.py \
 ```
 
 Tool will extend input data with predictions (as a new column) and save it to output file.
+
+All tools have the same interface. You can find available tools in `src/miRNAbenchmarks/tools/` directory.
+
+## Run multiple tools on multiple datasets
+
+```bash
+. predict.sh
+```
+
+By default, the script will run all tools on all datasets. You can specify tools and datasets changing `TOOLS`, `INPUT_DATA` and `RATIO` variables in the script.
+
+The script will produce a file with suffix `_predictions.tsv` for each dataset. Predictions from every tool will be saved in separate columns.
