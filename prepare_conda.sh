@@ -12,3 +12,5 @@ pip install scikit-learn
 pip install scipy
 pip install gdown
 pip install viennarna
+pip install torch
+pip install git+https://github.com/katarinagresova/TargetNet.git
