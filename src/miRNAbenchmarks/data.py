@@ -64,7 +64,7 @@ def download_klimentova(folder_path):
 
 def main():
     parser = argparse.ArgumentParser(description="Download datasets")
-    parser.add_argument("--path", type=str, help="Path to the directory where the datasets will be downloaded")
+    parser.add_argument("path", type=str, help="Path to the directory where the datasets will be downloaded")
     parser.add_argument("--helwak", action="store_true", help="Download Helwak 2013 Ago1-CLASH dataset")
     parser.add_argument("--hejret", action="store_true", help="Download Hejret 2023 Ago2-CLASH dataset")
     parser.add_argument("--klimentova", action="store_true", help="Download Klimentova 2022 Ago2-eCLIP dataset")
