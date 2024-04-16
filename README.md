@@ -13,12 +13,6 @@ Use prepared script to create conda environment with all necessary dependencies:
 . prepare_conda.sh
 ```
 
-Or create conda environment manually:
-```bash
-conda create -n benchmarks -f environment.yml
-conda activate benchmarks
-```
-
 ## Install package
 
 ```bash
