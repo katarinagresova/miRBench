@@ -24,7 +24,7 @@ if __name__ == '__main__':
     model_path = get_model_path(
         folder = 'Hejret_miRNA_CNN', 
         model_name = 'model_miRNA.h5', 
-        url = 'https://github.com/ML-Bioinfo-CEITEC/HybriDetector/raw/main/ML/Models/model_miRNA.h5'
+        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/Hejret_miRNA_CNN/model_miRNA.h5'
     )
     model = k.models.load_model(model_path)
 

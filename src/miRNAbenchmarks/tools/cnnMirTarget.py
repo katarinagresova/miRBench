@@ -96,7 +96,7 @@ if __name__ == '__main__':
     model_path = get_model_path(
         folder = 'cnnMirTarget', 
         model_name = 'cnn_model_preTrained.h5', 
-        url = 'https://github.com/zhengxueming/cnnMirTarget/raw/master/data/cnn_model_preTrained.h5')
+        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/cnnMirTarget/cnn_model_preTrained.h5')
 
     model = load_model(model_path)
 

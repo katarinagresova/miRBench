@@ -85,11 +85,11 @@ def get_model_path():
         return model_path
 
     print('Downloading the model...')
-    url = 'https://github.com/katarinagresova/miRNA_models/raw/master/cnn/trained_model/model-100.data-00000-of-00001'
+    url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetScan_CNN/model-100.data-00000-of-00001'
     urllib.request.urlretrieve(url, model_path + '.data-00000-of-00001')
-    url = 'https://github.com/katarinagresova/miRNA_models/raw/master/cnn/trained_model/model-100.index'
+    url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetScan_CNN/model-100.index'
     urllib.request.urlretrieve(url, model_path + '.index')
-    url = 'https://github.com/katarinagresova/miRNA_models/raw/master/cnn/trained_model/model-100.meta'
+    url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetScan_CNN/model-100.meta'
     urllib.request.urlretrieve(url, model_path + '.meta')
 
     return model_path

@@ -83,7 +83,7 @@ if __name__ == '__main__':
     model_path = get_model_path(
         folder = 'miRBind', 
         model_name = 'miRBind.h5', 
-        url = 'https://github.com/ML-Bioinfo-CEITEC/miRBind/raw/main/Models/miRBind.h5'
+        url = 'hhttps://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/miRBind/miRBind.h5'
     )
     model = k.models.load_model(model_path)
 

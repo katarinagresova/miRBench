@@ -233,7 +233,7 @@ if __name__ == '__main__':
     model_path = get_model_path(
         folder = 'Yang_Attention', 
         model_name = 'attention_model.pkl', 
-        url = ''
+        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/Yang_Attention/attention_model.pkl'
     )
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = get_model(model_path, device)

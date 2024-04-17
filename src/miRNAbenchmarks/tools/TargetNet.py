@@ -110,7 +110,7 @@ if __name__ == '__main__':
     model_path = get_model_path(
         folder = 'TargetNet', 
         model_name = 'TargetNet.pt', 
-        url = 'https://github.com/katarinagresova/TargetNet/raw/master/pretrained_models/TargetNet.pt'
+        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetNet/TargetNet.pt'
     )
     model = prepare_model(model_path, device)
     print('Model loaded')
