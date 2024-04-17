@@ -33,7 +33,7 @@ def download_hejret(folder_path):
 
     for ratio in [1, 10, 100]:
         url = f"https://github.com/ML-Bioinfo-CEITEC/HybriDetector/raw/main/ML/Datasets/miRNA_test_set_{ratio}.tsv"
-        filename = os.path.join(data_dir, f"{smallRNA}_test_set_{ratio}.tsv")
+        filename = os.path.join(data_dir, f"miRNA_test_set_{ratio}.tsv")
         urllib.request.urlretrieve(url, filename)
 
 def download_klimentova(folder_path):
