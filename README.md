@@ -33,8 +33,6 @@ Run some tool, for example TargetScan CNN:
 ```bash
 python src/miRNAbenchmarks/tools/TargetScanCnn.py \
     --input [PATH_TO_INPUT_DATA_TSV] \
-    --miRNA_column miRNA \
-    --gene_column gene \
     --output [PATH_TO_OUTPUT_DATA_TSV]
 ```
 

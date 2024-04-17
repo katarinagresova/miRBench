@@ -3,7 +3,7 @@ import numpy as np
 import os
 import urllib.request
 
-NAMING = {
+TOOLS = {
     "cnnMirTarget": "cnnMirTarget",
     "cofold": "RNAcofold",
     "HejretMirnaCnn": "Hejret miRNA CNN",
@@ -14,10 +14,9 @@ NAMING = {
     "YangAttention": "Yang Attention"
 }
 
-DATASET_CONFIG = {
+DATASETS_CONFIG = {
     "Hejret_2023": {
         "path": "/home/jovyan/miRNA_benchmarks/data/Hejret_2023/",
-        "sRNA": ["miRNA", "tRNA", "yRNA"],
         "ratios": [1, 10, 100],
         "sRNA_col": "noncodingRNA",
         "gene_col": "gene"
@@ -27,8 +26,8 @@ DATASET_CONFIG = {
 def parse_args(tool_name):
     parser = argparse.ArgumentParser(description=tool_name + ' prediction.')
     parser.add_argument('--input', type=str, help='Path to the input file - miRNA and a gene sequence in a tab-separated format.', required=True)
-    parser.add_argument('--miRNA_column', type=str, help='Name of the column containing miRNA sequences', required=True)
-    parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences', required=True)
+    parser.add_argument('--miRNA_column', type=str, help='Name of the column containing miRNA sequences', default='noncodingRNA')
+    parser.add_argument('--gene_column', type=str, help='Name of the column containing gene sequences', default='gene')
     parser.add_argument('--output', type=str, help='Path to the output file', required=True)
     return parser.parse_args()
 
