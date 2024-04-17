@@ -32,10 +32,9 @@ def download_hejret(folder_path):
         os.makedirs(data_dir)
 
     for ratio in [1, 10, 100]:
-        for smallRNA in ['miRNA', 'miRNA_real_seq', 'tRNA', 'yRNA']:
-            url = f"https://github.com/ML-Bioinfo-CEITEC/HybriDetector/raw/main/ML/Datasets/{smallRNA}_test_set_{ratio}.tsv"
-            filename = os.path.join(data_dir, f"{smallRNA}_test_set_{ratio}.tsv")
-            urllib.request.urlretrieve(url, filename)
+        url = f"https://github.com/ML-Bioinfo-CEITEC/HybriDetector/raw/main/ML/Datasets/miRNA_test_set_{ratio}.tsv"
+        filename = os.path.join(data_dir, f"{smallRNA}_test_set_{ratio}.tsv")
+        urllib.request.urlretrieve(url, filename)
 
 def download_klimentova(folder_path):
     """
@@ -56,10 +55,6 @@ def download_klimentova(folder_path):
 
     url = "https://drive.google.com/file/d/12o72sLUTEtoNLt8t4ubnzyqi_Wd-n6kC/view?usp=sharing"
     filename = os.path.join(data_dir, "miRNA_test_set_100.tsv")
-    gdown.download(url, filename, quiet=False, fuzzy=True)
-
-    url = "https://drive.google.com/file/d/12fH7uJgfyhSsod55iFq0wEfEcTNLss74/view?usp=sharing"
-    filename = os.path.join(data_dir, "tRNA_test_set_1.tsv")
     gdown.download(url, filename, quiet=False, fuzzy=True)
 
 def main():
