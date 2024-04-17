@@ -78,7 +78,7 @@ def get_model_path():
     current_path = os.path.realpath(__file__)
     model_dir_path = os.path.join(os.path.dirname(current_path), '../../../models/TargetScan_CNN')
     if not os.path.exists(model_dir_path):
-        os.mkdir(model_dir_path, parent = True)
+        os.makedirs(model_dir_path)
 
     model_path = os.path.join(model_dir_path, 'model-100')
     if os.path.exists(model_path + '.meta'):
