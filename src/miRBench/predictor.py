@@ -292,11 +292,11 @@ class TargetScanCnn(Predictor):
         if not model_path.exists():
             model_path.mkdir(parents=True)
 
-            url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetScan_CNN/model-100.data-00000-of-00001'
+            url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetScan_CNN/model-100.data-00000-of-00001'
             urllib.request.urlretrieve(url, Path(model_path / 'model-100.data-00000-of-00001'))
-            url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetScan_CNN/model-100.index'
+            url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetScan_CNN/model-100.index'
             urllib.request.urlretrieve(url, Path(model_path / 'model-100.index'))
-            url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetScan_CNN/model-100.meta'
+            url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetScan_CNN/model-100.meta'
             urllib.request.urlretrieve(url, Path(model_path / 'model-100.meta'))
 
         return model_path
@@ -502,15 +502,15 @@ def get_model(model_name, force_download = False):
 def download_model(model_name, local_path):
 
     if model_name == "cnnMirTarget":
-        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/cnnMirTarget/cnn_model_preTrained.h5'
+        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/cnnMirTarget/cnn_model_preTrained.h5'
     elif model_name == "miRBind":
-        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/miRBind/miRBind.h5'
+        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBind/miRBind.h5'
     elif model_name == "HejretMirnaCnn":
-        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/Hejret_miRNA_CNN/model_miRNA.h5'
+        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Hejret_miRNA_CNN/model_miRNA.h5'
     elif model_name == "TargetNet":
-        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/TargetNet/TargetNet.pt'
+        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetNet/TargetNet.pt'
     elif model_name == "YangAttention":
-        url = 'https://github.com/katarinagresova/miRNA_benchmarks/raw/main/models/Yang_Attention/attention_model.pkl'
+        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Yang_Attention/attention_model.pkl'
     else:
         raise ValueError("Unknown model name")
 
