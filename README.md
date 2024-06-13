@@ -3,7 +3,7 @@
 ## Clone repo
 
 ```bash
-git clone https://github.com/katarinagresova/miRNA_benchmarks.git
+git clone https://github.com/katarinagresova/miRBench.git
 ```
 
 ## Setup conda environment
@@ -22,7 +22,7 @@ pip install -e .
 ## Download data
 
 ```bash
-python src/miRNAbenchmarks/data.py <DATA_FOLDER_PATH> [--helwak] [--hejret] [--klimentova]
+python src/miRBench/data.py <DATA_FOLDER_PATH> [--helwak] [--hejret] [--klimentova]
 ```
 
 Data will be downloaded to `DATA_FOLDER_PATH/` directory, under separate subdirectories for each dataset.
@@ -31,14 +31,14 @@ Data will be downloaded to `DATA_FOLDER_PATH/` directory, under separate subdire
 
 Run some tool, for example TargetScan CNN:
 ```bash
-python src/miRNAbenchmarks/tools/TargetScanCnn.py \
+python src/miRBench/tools/TargetScanCnn.py \
     --input [PATH_TO_INPUT_DATA_TSV] \
     --output [PATH_TO_OUTPUT_DATA_TSV]
 ```
 
 Tool will extend input data with predictions (as a new column) and save it to output file.
 
-All tools have the same interface. You can find available tools in `src/miRNAbenchmarks/tools/` directory.
+All tools have the same interface. You can find available tools in `src/miRBench/tools/` directory.
 
 ## Run multiple tools on multiple datasets
 

@@ -10,7 +10,7 @@ from targetnet.utils import set_seeds
 from targetnet.model.model_utils import get_model
 from targetnet.data import extended_seed_alignment, encode_RNA
 
-from miRNAbenchmarks.utils import parse_args, get_model_path
+from miRBench.utils import parse_args, get_model_path
 
 class ModelConfig():
     def __init__(self, cfg, idx="model_config"):

@@ -5,7 +5,7 @@ import numpy as np
 import random
 from keras.models import load_model
 
-from miRNAbenchmarks.utils import parse_args, get_model_path
+from miRBench.utils import parse_args, get_model_path
 
 x_cast = {"A":[1,0,0,0],"U":[0,1,0,0],\
           "T":[0,1,0,0],"G":[0,0,1,0],\

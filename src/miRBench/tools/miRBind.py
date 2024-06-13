@@ -5,7 +5,7 @@ from tensorflow import keras as k
 from tensorflow.keras import layers
 from tensorflow.keras.utils import register_keras_serializable
 
-from miRNAbenchmarks.utils import parse_args, one_hot_encoding, get_model_path
+from miRBench.utils import parse_args, one_hot_encoding, get_model_path
 
 @register_keras_serializable()
 class ResBlock(layers.Layer):

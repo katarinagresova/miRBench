@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import numpy as np
 import os
 
-from miRNAbenchmarks.utils import parse_args, get_model_path
+from miRBench.utils import parse_args, get_model_path
 
 miRNA_MAXLEN = 30
 mRNA_MAXLEN = 40

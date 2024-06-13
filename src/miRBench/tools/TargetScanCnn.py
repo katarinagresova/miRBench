@@ -4,7 +4,7 @@ import tensorflow as tf
 import os
 import urllib.request
 
-from miRNAbenchmarks.utils import parse_args
+from miRBench.utils import parse_args
 
 def one_hot_encode(seq):
     if len(seq) == 0:

@@ -3,7 +3,7 @@ import urllib.request
 import pandas as pd
 from tensorflow import keras as k
 
-from miRNAbenchmarks.utils import parse_args, one_hot_encoding, get_model_path
+from miRBench.utils import parse_args, one_hot_encoding, get_model_path
 
 def predict_probs(df, miRNA_col, gene_col, model):
     """

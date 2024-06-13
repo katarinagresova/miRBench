@@ -2,9 +2,9 @@
 
 # paths to downloaded datasets - number for ratio and extension is added automatically 
 declare -a INPUT_DATA=(
-    "$HOME/miRNA_benchmarks/data/Helwak_2013/miRNA_test_set_"
-    "$HOME/miRNA_benchmarks/data/Klimentova_2022/miRNA_test_set_"
-    "$HOME/miRNA_benchmarks/data/Hejret_2023/miRNA_test_set_"
+    "$HOME/miRBench/data/Helwak_2013/miRNA_test_set_"
+    "$HOME/miRBench/data/Klimentova_2022/miRNA_test_set_"
+    "$HOME/miRBench/data/Hejret_2023/miRNA_test_set_"
 )
 
 # datasets are available in three ratios - 1:1, 1:10 and 1:100. 
@@ -48,7 +48,7 @@ for i in "${!INPUT_DATA[@]}"; do
         # iterate over the array of TOOLS
         for j in "${!TOOLS[@]}"; do
             echo "Predicting using ${TOOLS[$j]}"
-            python $HOME/miRNA_benchmarks/src/miRNAbenchmarks/tools/${TOOLS[$j]}.py \
+            python $HOME/miRBench/src/miRBench/tools/${TOOLS[$j]}.py \
                 --input ${INPUT_DATA[$i]}${RATIOS[$ratio]}${SUFFIXES}${EXTENSION} \
                 --miRNA_column ${miRNA_COLUMN} \
                 --gene_column ${gene_COLUMN} \
