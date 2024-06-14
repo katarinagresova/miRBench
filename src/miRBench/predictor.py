@@ -16,19 +16,19 @@ CACHE_PATH = Path.home() / ".miRBench" / "models"
 MODEL_FILE_NAME = "model.h5"
 
 def list_predictors():
-    print(["cnnMirTarget", 
-           "RNAcofold", 
+    return ["cnnMirTarget", 
+           "RNACofold", 
            "HejretMirnaCnn", 
            "miRBind", 
            "TargetNet", 
            "Seed8mer", "Seed7mer", "Seed6mer", "Seed6merBulgeOrMismatch", 
            "TargetScanCnn" , 
-           "YangAttention"])
+           "YangAttention"]
 
 def get_predictor(predictor_name):
     if predictor_name == "cnnMirTarget":
         return cnnMirTarget()
-    elif predictor_name == "RNAcofold":
+    elif predictor_name == "RNACofold":
         return RNACofold()
     elif predictor_name == "HejretMirnaCnn":
         return HejretMirnaCnn()
@@ -49,7 +49,7 @@ def get_predictor(predictor_name):
     elif predictor_name == "YangAttention":
         return YangAttention()
     else:
-        raise ValueError("Unknown predictor name")
+        raise ValueError(f"Unknown predictor name: {predictor_name}")
 
 class Predictor():
     def __call__(self, data, **kwargs):
@@ -372,6 +372,8 @@ class SeedPredictor(Predictor):
         for sample in data:
             seeds = self.get_seed(sample[0])
             preds.append(1 if any([seq in sample[1] for seq in seeds]) else 0)
+
+        return preds
 
     def get_seed(self, miRNA):
         raise NotImplementedError()

@@ -19,7 +19,13 @@ def get_encoder(model_name):
         return YangAttentionEncoder()
     elif model_name == "miRBind":
         return miRBindEncoder()
-    elif model_name == "Seed":
+    elif model_name == "Seed8mer":
+        return SeedEncoder()
+    elif model_name == "Seed7mer":
+        return SeedEncoder()
+    elif model_name == "Seed6mer":
+        return SeedEncoder()
+    elif model_name == "Seed6merBulgeOrMismatch":
         return SeedEncoder()
     elif model_name == "RNACofold":
         return RNACofoldEncoder()
@@ -42,8 +48,7 @@ class RNACofoldEncoder():
         def merge_seq(row):
             return row[miRNA_col] + "&" + row[gene_col]
 
-        df["merged_seq"] = df.apply(merge_seq, axis=1)
-        return df["merged_seq"].values
+        return df.apply(merge_seq, axis=1).values
 
 class miRBindEncoder():
     """

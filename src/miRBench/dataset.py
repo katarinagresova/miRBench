@@ -7,7 +7,7 @@ DATASET_FILE = "dataset.tsv"
 
 def list_datasets():
     # TODO: add more information about datasets
-    print(["Helwak2013", "Hejret2023", "Klimentova2022", "Manakov2022"])
+    return ["Helwak2013", "Hejret2023"]
 
 def get_dataset(dataset_name, ratio, split, force_download = False):
     """
