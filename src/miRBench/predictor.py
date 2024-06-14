@@ -15,11 +15,21 @@ from collections import OrderedDict
 CACHE_PATH = Path.home() / ".miRBench" / "models"
 MODEL_FILE_NAME = "model.h5"
 
+def list_predictors():
+    print(["cnnMirTarget", 
+           "RNAcofold", 
+           "HejretMirnaCnn", 
+           "miRBind", 
+           "TargetNet", 
+           "Seed8mer", "Seed7mer", "Seed6mer", "Seed6merBulgeOrMismatch", 
+           "TargetScanCnn" , 
+           "YangAttention"])
+
 def get_predictor(predictor_name):
     if predictor_name == "cnnMirTarget":
         return cnnMirTarget()
     elif predictor_name == "RNAcofold":
-        return RNAcofold()
+        return RNACofold()
     elif predictor_name == "HejretMirnaCnn":
         return HejretMirnaCnn()
     elif predictor_name == "miRBind":
@@ -36,40 +46,70 @@ def get_predictor(predictor_name):
         return Seed6merBulgeOrMismatch()
     elif predictor_name == "TargetScanCnn":
         return TargetScanCnn()
+    elif predictor_name == "YangAttention":
+        return YangAttention()
     else:
         raise ValueError("Unknown predictor name")
 
 class Predictor():
-    def __call__(self, data):
-        return self.predict(data)
+    def __call__(self, data, **kwargs):
+        return self.predict(data, **kwargs)
     
-    def predict(self, data):
+    def predict(self, data, **kwargs):
         raise NotImplementedError()
 
 class cnnMirTarget(Predictor):
+    """
+    Based on Zheng, Xueming, et al. "Prediction of miRNA targets by learning from interaction sequences." Plos one 15.5 (2020): e0232578. https://doi.org/10.1371%2Fjournal.pone.0232578
+    Python implementation: https://github.com/zhengxueming/cnnMirTarget
+
+    Predicts the probability of a miRNA-mRNA interaction.
+    Returns a list of probabilities.
+    """
     def __init__(self):
         self.model = get_model("cnnMirTarget")
 
-    def predict(self, data):
-        return self.model.predict(data)
+    def predict(self, data, **kwargs):
+        return self.model.predict(data, **kwargs)
 
-class RNAcofold(Predictor):
+class RNACofold(Predictor):
+    """
+    Based on Lorenz, Ronny, et al. "ViennaRNA Package 2.0." Algorithms for molecular biology 6 (2011): 1-14. https://doi.org/10.1186/1748-7188-6-26.
+    Python implementation: https://pypi.org/project/ViennaRNA/
+
+    Predicts the minimum free energy of a miRNA-mRNA sequence.
+    Returns a list of negative minimum free energies.
+    """
     def predict(self, data):
         return [-1 * RNA.cofold(seq)[1] for seq in data]
     
 class HejretMirnaCnn(Predictor):
+    """
+    Based on Hejret, Vaclav, et al. "Analysis of chimeric reads characterises the diverse targetome of AGO2-mediated regulation." Scientific Reports 13.1 (2023): 22895. https://doi.org/10.1038/s41598-023-49757-z.
+    Python implementation: https://github.com/ML-Bioinfo-CEITEC/HybriDetector/tree/main
+
+    Predicts the probability of a miRNA-mRNA interaction.
+    Returns a list of probabilities.
+    """
     def __init__(self):
         self.model = get_model("HejretMirnaCnn")
 
-    def predict(self, data):
-        return self.model.predict(data)
+    def predict(self, data, **kwargs):
+        return self.model.predict(data, **kwargs)
     
 class miRBind(Predictor):
+    """
+    Based on Klimentová, Eva, et al. "miRBind: A deep learning method for miRNA binding classification." Genes 13.12 (2022): 2323. https://doi.org/10.3390/genes13122323.
+    Python implementation: https://github.com/ML-Bioinfo-CEITEC/miRBind
+
+    Predicts the probability of a miRNA-mRNA interaction.
+    Returns a list of probabilities.
+    """
     def __init__(self):
         self.model = get_model("miRBind")
 
-    def predict(self, data):
-        return self.model.predict(data)[:, 1]
+    def predict(self, data, **kwargs):
+        return self.model.predict(data, **kwargs)[:, 1]
     
     @register_keras_serializable()
     class ResBlock(layers.Layer):
@@ -127,17 +167,25 @@ class miRBind(Predictor):
             return {'filters': self.filters, 'downsample': self.downsample, 'kernel_size': self.kernel_size}
     
 class TargetNet(Predictor):
-    def __init__(self, device = "cpu"):
-        self.model = self.prepare_model()
-        self.device = device
+    """
+    Based on Min, Seonwoo, Byunghan Lee, and Sungroh Yoon. "TargetNet: functional microRNA target prediction with deep neural networks." Bioinformatics 38.3 (2022): 671-677. https://doi.org/10.1093/bioinformatics/btab733.
+    Python implementation: https://github.com/seonwoo-min/TargetNet
 
-    def predict(self, data):
+    Predicts the probability of a miRNA-mRNA interaction.
+    Returns a list of probabilities, conatenated for all batches.
+    """
+    def __init__(self):
+        self.model = self.prepare_model()
+
+    def predict(self, data, device = "cpu"):
         predictions = []
+        self.model.to(device)
         self.model.eval()
-        for X in data:
-            preds = self.model(X)
-            preds = torch.sigmoid(preds).cpu().detach().numpy()
-            predictions.extend(preds[:,0])
+        with torch.no_grad():
+            for X in data:
+                preds = self.model(X)
+                preds = torch.sigmoid(preds).cpu().detach().numpy()
+                predictions.extend(preds[:,0])
 
         return predictions
     
@@ -163,7 +211,7 @@ class TargetNet(Predictor):
 
     def prepare_model(self):
 
-        model_path = Path(CACHE_PATH / TargetNet / "model.pt")
+        model_path = Path(CACHE_PATH / "TargetNet" / "model.pt")
         if not model_path.exists():
             download_model("TargetNet", model_path)
 
@@ -176,7 +224,7 @@ class TargetNet(Predictor):
             'pool_size': 3
         })
 
-        model, _ = get_model(model_cfg, with_esa=True)
+        model, _ = self.get_model(model_cfg, with_esa=True)
         checkpoint = torch.load(model_path, map_location="cpu")
 
         state_dict = OrderedDict()
@@ -185,9 +233,138 @@ class TargetNet(Predictor):
             state_dict[k] = v
 
         model.load_state_dict(state_dict)
-        model.to(self.device)
 
         return model
+
+    def get_model(self, model_cfg, with_esa, dropout_rate=None):
+        """ get model considering model types """
+        model = self.TargetNetModel(self, model_cfg, with_esa, dropout_rate)
+        params = self.get_params_and_initialize(model)
+
+        return model, params
+
+
+    def get_params_and_initialize(self, model):
+        """
+        parameter initialization
+        get weights and biases for different weighty decay during training
+        """
+        params_with_decay, params_without_decay = [], []
+        for name, param in model.named_parameters():
+            if "weight" in name:
+                if "bn" not in name:
+                    nn.init.kaiming_normal_(param, nonlinearity='relu')
+                    params_with_decay.append(param)
+                else:
+                    nn.init.ones_(param)
+                    params_without_decay.append(param)
+
+            else:
+                nn.init.zeros_(param)
+                params_without_decay.append(param)
+
+        return params_with_decay, params_without_decay
+    
+    class TargetNetModel(nn.Module):
+        """ TargetNet for microRNA target prediction """
+        def __init__(self, target_net, model_cfg, with_esa, dropout_rate):
+            super(TargetNet.TargetNetModel, self).__init__()
+            self.target_net = target_net
+            num_channels = model_cfg.num_channels
+            num_blocks = model_cfg.num_blocks
+
+            if not with_esa: self.in_channels, in_length = 8, 40
+            else:            self.in_channels, in_length = 10, 50
+            out_length = np.floor(((in_length - model_cfg.pool_size) / model_cfg.pool_size) + 1)
+
+            self.stem = self._make_layer(model_cfg, num_channels[0], num_blocks[0], dropout_rate, stem=True)
+            self.stage1 = self._make_layer(model_cfg, num_channels[1], num_blocks[1], dropout_rate)
+            self.stage2 = self._make_layer(model_cfg, num_channels[2], num_blocks[2], dropout_rate)
+            self.relu = nn.ReLU()
+            self.dropout = nn.Dropout(p=dropout_rate if dropout_rate is not None else 0)
+            self.max_pool = nn.MaxPool1d(model_cfg.pool_size)
+            self.linear = nn.Linear(int(num_channels[-1] * out_length), 1)
+
+        def _make_layer(self, cfg, out_channels, num_blocks, dropout_rate, stem=False):
+            layers = []
+            for b in range(num_blocks):
+                if stem: layers.append(self.target_net.Conv_Layer(self.in_channels, out_channels, cfg.stem_kernel_size, dropout_rate,
+                                                post_activation= b < num_blocks - 1))
+                else:    layers.append(self.target_net.ResNet_Block(self.in_channels, out_channels, cfg.block_kernel_size, dropout_rate,
+                                                    skip_connection=cfg.skip_connection))
+                self.in_channels = out_channels
+
+            return nn.Sequential(*layers)
+
+        def forward(self, x):
+            x = self.stem(x)
+            x = self.stage1(x)
+            x = self.stage2(x)
+            x = self.dropout(self.relu(x))
+            x = self.max_pool(x)
+            x = x.reshape(len(x), -1)
+            x = self.linear(x)
+
+            return x
+
+
+    def conv_kx1(in_channels, out_channels, kernel_size, stride=1):
+        """ kx1 convolution with padding without bias """
+        layers = []
+        padding = kernel_size - 1
+        padding_left = padding // 2
+        padding_right = padding - padding_left
+        layers.append(nn.ConstantPad1d((padding_left, padding_right), 0))
+        layers.append(nn.Conv1d(in_channels, out_channels, kernel_size, stride, bias=False))
+        return nn.Sequential(*layers)
+
+
+    class Conv_Layer(nn.Module):
+        """
+        CNN layer with/without activation
+        -- Conv_kx1_ReLU-Dropout
+        """
+        def __init__(self, in_channels, out_channels, kernel_size, dropout_rate, post_activation):
+            super(TargetNet.Conv_Layer, self).__init__()
+            self.relu = nn.ReLU()
+            self.dropout = nn.Dropout(p=dropout_rate if dropout_rate is not None else 0)
+            self.conv = TargetNet.conv_kx1(in_channels, out_channels, kernel_size)
+            self.post_activation = post_activation
+
+        def forward(self, x):
+            out = self.conv(x)
+            if self.post_activation:
+                out = self.dropout(self.relu(out))
+
+            return out
+
+
+    class ResNet_Block(nn.Module):
+        """
+        ResNet Block
+        -- ReLU-Dropout-Conv_kx1 - ReLU-Dropout-Conv_kx1
+        """
+        def __init__(self, in_channels, out_channels, kernel_size, dropout_rate, skip_connection):
+            super(TargetNet.ResNet_Block, self).__init__()
+            self.relu = nn.ReLU()
+            self.dropout = nn.Dropout(p=dropout_rate if dropout_rate is not None else 0)
+            self.conv1 = TargetNet.conv_kx1(in_channels, out_channels, kernel_size)
+            self.conv2 = TargetNet.conv_kx1(out_channels, out_channels, kernel_size)
+            self.skip_connection = skip_connection
+
+        def forward(self, x):
+            out = self.dropout(self.relu(x))
+            out = self.conv1(out)
+
+            out = self.dropout(self.relu(out))
+            out = self.conv2(out)
+
+            if self.skip_connection:
+                out_c, x_c = out.shape[1], x.shape[1]
+                if out_c == x_c: out += x
+                else:            out += F.pad(x, (0, 0, 0, out_c - x_c))
+
+            return out
 
 class SeedPredictor(Predictor):
     def predict(self, data):
@@ -199,13 +376,27 @@ class SeedPredictor(Predictor):
     def get_seed(self, miRNA):
         raise NotImplementedError()
 
-class Seed8mer(SeedPredictor):               
+class Seed8mer(SeedPredictor):
+    """
+    Based on McGeary, Sean E., et al. "MicroRNA 3′-compensatory pairing occurs through two binding modes, with affinity shaped by nucleotide identity and position." Elife 11 (2022): e69803. https://doi.org/10.7554/eLife.69803.
+    Python implementation: None, made from scratch
+
+    Predicts the occurrence of 8mer seed match.
+    Returns a list of 0s and 1s. 0s indicate no 8mer seed match, 1s indicate 8mer seed match.
+    """              
     def get_seed(self, miRNA):
         return [
             'A' + miRNA[1:8] # 8mer - full complementarity on positions 2-8 and A on the position 1
         ]
     
 class Seed7mer(SeedPredictor):
+    """
+    Based on McGeary, Sean E., et al. "MicroRNA 3′-compensatory pairing occurs through two binding modes, with affinity shaped by nucleotide identity and position." Elife 11 (2022): e69803. https://doi.org/10.7554/eLife.69803.
+    Python implementation: None, made from scratch
+
+    Predicts the occurrence of 7mer seed match.
+    Returns a list of 0s and 1s. 0s indicate no 7mer seed match, 1s indicate 7mer seed match.
+    """
     def get_seed(self, miRNA):
         return [
             miRNA[1:8], # 7mer-m8 - full complementarity on positions 2-8
@@ -213,6 +404,13 @@ class Seed7mer(SeedPredictor):
         ]
     
 class Seed6mer(SeedPredictor):
+    """
+    Based on McGeary, Sean E., et al. "MicroRNA 3′-compensatory pairing occurs through two binding modes, with affinity shaped by nucleotide identity and position." Elife 11 (2022): e69803. https://doi.org/10.7554/eLife.69803.
+    Python implementation: None, made from scratch
+
+    Predicts the occurrence of 6mer seed match.
+    Returns a list of 0s and 1s. 0s indicate no 6mer seed match, 1s indicate 6mer seed match.
+    """
     def get_seed(self, miRNA):
         return [
             miRNA[1:7], # 6mer - full complementarity on positions 2-7
@@ -221,6 +419,13 @@ class Seed6mer(SeedPredictor):
         ]
     
 class Seed6merBulgeOrMismatch(SeedPredictor):
+    """
+    Based on McGeary, Sean E., et al. "MicroRNA 3′-compensatory pairing occurs through two binding modes, with affinity shaped by nucleotide identity and position." Elife 11 (2022): e69803. https://doi.org/10.7554/eLife.69803.
+    Python implementation: None, made from scratch
+
+    Predicts the occurrence of 6mer seed match with bulges or mismatches.
+    Returns a list of 0s and 1s. 0s indicate no 6mer seed match with bulges or mismatches, 1s indicate 6mer seed match with bulges or mismatches.
+    """
     def get_seed(self, miRNA):
         mers = []
         mers.append(miRNA[1:7])
@@ -256,6 +461,13 @@ class Seed6merBulgeOrMismatch(SeedPredictor):
         return list(set(mers))
 
 class TargetScanCnn(Predictor):
+    """
+    Based on McGeary, Sean E., et al. "The biochemical basis of microRNA targeting efficacy." Science 366.6472 (2019): eaav1741. https://doi.org/10.1126/science.aav1741.
+    Python implementation: https://github.com/kslin/miRNA_models/tree/master
+
+    Predicts relative KD values of miRNA-mRNA interactions.
+    Returns a list of relative KD values.
+    """
     def __init__(self):
         self.model_path = self.prepare_model()
 
@@ -302,16 +514,24 @@ class TargetScanCnn(Predictor):
         return model_path
 
 class YangAttention(Predictor):
-    def __init__(self, device = "cpu", miRNA_MAXLEN = 30, mRNA_MAXLEN = 40):
+    """
+    Based on Yang, Tzu-Hsien, et al. "Identifying Human miRNA Target Sites via Learning the Interaction Patterns between miRNA and mRNA Segments." Journal of Chemical Information and Modeling (2023). https://doi.org/10.1021/acs.jcim.3c01150.
+    Python implementation: http://cosbi2.ee.ncku.edu.tw/mirna_binding/download
+
+    Predicts the probability of a miRNA-mRNA interaction.
+    Returns a list of probabilities.
+    """
+    def __init__(self):
         
-        self.miRNA_MAXLEN = miRNA_MAXLEN
-        self.mRNA_MAXLEN = mRNA_MAXLEN
+        self.miRNA_MAXLEN = 30
+        self.mRNA_MAXLEN = 40
         self.RNA = list('ATCG')
         self.MODEL_TYPE = 'attention'
         
-        self.model = self.prepare_model("YangAttention", device)
+        self.model = self.prepare_model("YangAttention")
 
-    def predict(self, data):
+    def predict(self, data, device = "cpu"):
+        self.model.to(device)
         self.model.eval()
         preds = []
         for (batch, ) in data:
@@ -323,7 +543,7 @@ class YangAttention(Predictor):
         preds = np.array(preds) 
         return preds
     
-    def prepare_model(self, model_name, device):
+    def prepare_model(self, model_name):
         model_path = Path(CACHE_PATH / model_name / "model.pkl")
         if not model_path.exists():
             download_model(model_name, model_path)
@@ -340,8 +560,7 @@ class YangAttention(Predictor):
                 transformer_dropout=0.5,
                 cls_dropout=0.75
             )
-        model.to(device)
-        model.load_state_dict(torch.load(model_path, map_location=device))
+        model.load_state_dict(torch.load(model_path, map_location='cpu'))
 
         return model
     
@@ -445,10 +664,8 @@ class YangAttention(Predictor):
             self.linear1 = nn.Linear(self.d_model, self.d_model*4)
             self.dropout = nn.Dropout(transformer_dropout)
             self.linear2 = nn.Linear(self.d_model*4, self.d_model)
-            #self.norm1 = nn.LayerNorm(self.d_model)
             self.norm2 = nn.LayerNorm(self.d_model)
             self.norm3 = nn.LayerNorm(self.d_model)
-            #self.dropout1 = nn.Dropout(transformer_dropout)
             self.dropout2 = nn.Dropout(transformer_dropout)
             self.dropout3 = nn.Dropout(transformer_dropout)
             self.activation = nn.PReLU()#nn.GELU()#
