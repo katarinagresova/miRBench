@@ -35,12 +35,8 @@ class RNACofoldEncoder():
     Returns list of strings with miRNA and gene sequences separated by "&".
     """
 
-    def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
-        self.miRNA_col = miRNA_col
-        self.gene_col = gene_col
-
-    def __call__(self, df):
-        return self.data_preprocessing(df, self.miRNA_col, self.gene_col)
+    def __call__(self, df, miRNA_col="noncodingRNA", gene_col="gene"):
+        return self.data_preprocessing(df, miRNA_col, gene_col)
 
     def data_preprocessing(self, df, miRNA_col, gene_col):
         def merge_seq(row):
@@ -58,15 +54,11 @@ class miRBindEncoder():
     2D-binding matrix has shape (gene_max_len, miRNA_max_len, 1) and contains 1 for Watson-Crick interactions and 0 otherwise.
     Returns array with shape (num_of_samples, gene_max_len, miRNA_max_len, 1).
     """
-    def __init__(self, miRNA_col="noncodingRNA", gene_col="gene", tensor_dim=(50, 20, 1)):
-        self.miRNA_col = miRNA_col
-        self.gene_col = gene_col
-        self.tensor_dim = tensor_dim
 
-    def __call__(self, df):
-        return self.binding_encoding(df, self.miRNA_col, self.gene_col, self.tensor_dim)
+    def __call__(self, df, miRNA_col="noncodingRNA", gene_col="gene", tensor_dim=(50, 20, 1)):
+        return self.binding_encoding(df, miRNA_col, gene_col, tensor_dim)
     
-    def binding_encoding(self, df, miRNA_col, gene_col, tensor_dim=(50, 20, 1)):
+    def binding_encoding(self, df, miRNA_col, gene_col, tensor_dim):
         """
         fun encodes miRNAs and mRNAs in df into binding matrices
         :param df: dataframe containing gene_col and miRNA_col columns
@@ -102,7 +94,7 @@ class HejretMirnaCnnEncoder(miRBindEncoder):
     Returns array with shape (num_of_samples, gene_max_len, miRNA_max_len, 1).
     """
     def __init__(self):
-        super().__init__(miRNA_col="noncodingRNA", gene_col="gene", tensor_dim=(50, 20, 1))
+        super().__init__()
 
 class cnnMirTargetEncoder():
     """
@@ -120,15 +112,13 @@ class cnnMirTargetEncoder():
     Returns numpy array with shape (num_of_samples, 110, 4).
     """
 
-    def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
-        self.miRNA_col = miRNA_col
-        self.gene_col = gene_col
+    def __init__(self):
         self.x_cast = {"A":[1,0,0,0],"U":[0,1,0,0],\
                        "T":[0,1,0,0],"G":[0,0,1,0],\
                        "C":[0,0,0,1],"N":[0,0,0,0]}
 
-    def __call__(self, df):
-        return self.prepare_data(df, self.miRNA_col, self.gene_col)
+    def __call__(self, df, miRNA_col="noncodingRNA", gene_col="gene"):
+        return self.prepare_data(df, miRNA_col, gene_col)
 
     # function: padding all the miRNA_target_seq to 110 nt and vectorize with one-hot encoding
     def transform_xdata(self, column):
@@ -281,12 +271,9 @@ class TargetScanCnnEncoder():
     These 40x48 are stacked for each 12-nucleotide substring of gene.
     Returns numpy array with shape (num_of_samples, number_of_12_substrings_in_gene, 40, 48).
     """
-    def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
-        self.miRNA_col = miRNA_col
-        self.gene_col = gene_col
 
-    def __call__(self, df):
-        return self.prepare_data(df, self.miRNA_col, self.gene_col)
+    def __call__(self, df, miRNA_col="noncodingRNA", gene_col="gene"):
+        return self.prepare_data(df, miRNA_col, gene_col)
 
     def one_hot_encode(self, seq):
         if len(seq) == 0:
@@ -372,13 +359,10 @@ class SeedEncoder():
     Encodes miRNA and gene sequences as an array of [miRNA, reverse_complement(gene)] pairs.
     Returns array of [miRNA, reverse_complement(gene)] pairs.
     """
-    def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
-        self.miRNA_col = miRNA_col
-        self.gene_col = gene_col
 
-    def __call__(self, df):
+    def __call__(self, df, miRNA_col="noncodingRNA", gene_col="gene"):
         # return array of [miRNA, reverse_complement(gene)] pairs
-        return df.apply(lambda x: [x[self.miRNA_col], reverse_complement(x[self.gene_col])], axis=1)
+        return df.apply(lambda x: [x[miRNA_col], reverse_complement(x[gene_col])], axis=1)
 
 def reverse_complement(st):
     nn = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
