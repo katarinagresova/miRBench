@@ -1,4 +1,4 @@
-# miRNA Benchmarks
+# miRNA target site prediction Benchmarks
 
 ## Clone repo
 
