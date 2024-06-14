@@ -3,9 +3,7 @@
 ## Installation
 
 ```bash
-git clone https://github.com/katarinagresova/miRBench.git
-cd miRBench
-pip install .
+pip install git+https://github.com/katarinagresova/miRBench.git
 ```
 
 ## Examples
