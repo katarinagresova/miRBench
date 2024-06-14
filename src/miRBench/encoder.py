@@ -7,8 +7,8 @@ from torch.utils.data import TensorDataset, DataLoader
 random.seed(42)
 
 def get_encoder(model_name):
-    if model_name == "HejrejMirnaCnn":
-        return HejrejMirnaCnnEncoder()
+    if model_name == "HejretMirnaCnn":
+        return HejretMirnaCnnEncoder()
     elif model_name == "cnnMirTarget":
         return cnnMirTargetEncoder()
     elif model_name == "TargetNet":
@@ -21,12 +21,20 @@ def get_encoder(model_name):
         return miRBindEncoder()
     elif model_name == "Seed":
         return SeedEncoder()
-    elif model_name == "RNAcofold":
+    elif model_name == "RNACofold":
         return RNACofoldEncoder()
     else:
         raise ValueError(f"Model {model_name} not found")
 
 class RNACofoldEncoder():
+    """
+    Based on Lorenz, Ronny, et al. "ViennaRNA Package 2.0." Algorithms for molecular biology 6 (2011): 1-14. https://doi.org/10.1186/1748-7188-6-26.
+    Python implementation: https://pypi.org/project/ViennaRNA/
+
+    Encodes miRNA and gene sequences into string for predicting RNAcofold secondary structure.
+    Returns list of strings with miRNA and gene sequences separated by "&".
+    """
+
     def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
         self.miRNA_col = miRNA_col
         self.gene_col = gene_col
@@ -42,6 +50,14 @@ class RNACofoldEncoder():
         return df["merged_seq"].values
 
 class miRBindEncoder():
+    """
+    Based on Klimentová, Eva, et al. "miRBind: A deep learning method for miRNA binding classification." Genes 13.12 (2022): 2323. https://doi.org/10.3390/genes13122323.
+    Python implementation: https://github.com/ML-Bioinfo-CEITEC/miRBind
+
+    Encodes miRNA and gene sequences into 2D-binding matrix.
+    2D-binding matrix has shape (gene_max_len, miRNA_max_len, 1) and contains 1 for Watson-Crick interactions and 0 otherwise.
+    Returns array with shape (num_of_samples, gene_max_len, miRNA_max_len, 1).
+    """
     def __init__(self, miRNA_col="noncodingRNA", gene_col="gene", tensor_dim=(50, 20, 1)):
         self.miRNA_col = miRNA_col
         self.gene_col = gene_col
@@ -75,46 +91,44 @@ class miRBindEncoder():
 
         return ohe_matrix_2d
     
-class HejrejMirnaCnnEncoder(miRBindEncoder):
+class HejretMirnaCnnEncoder(miRBindEncoder):
+    """
+    Based on Hejret, Vaclav, et al. "Analysis of chimeric reads characterises the diverse targetome of AGO2-mediated regulation." Scientific Reports 13.1 (2023): 22895. https://doi.org/10.1038/s41598-023-49757-z.
+    Python implementation: https://github.com/ML-Bioinfo-CEITEC/HybriDetector/tree/main
+
+    Uses the same encoding as miRBindEncoder.
+    Encodes miRNA and gene sequences into 2D-binding matrix.
+    2D-binding matrix has shape (gene_max_len, miRNA_max_len, 1) and contains 1 for Watson-Crick interactions and 0 otherwise.
+    Returns array with shape (num_of_samples, gene_max_len, miRNA_max_len, 1).
+    """
     def __init__(self):
         super().__init__(miRNA_col="noncodingRNA", gene_col="gene", tensor_dim=(50, 20, 1))
 
 class cnnMirTargetEncoder():
+    """
+    Based on Zheng, Xueming, et al. "Prediction of miRNA targets by learning from interaction sequences." Plos one 15.5 (2020): e0232578. https://doi.org/10.1371%2Fjournal.pone.0232578
+    Python implementation: https://github.com/zhengxueming/cnnMirTarget
+
+    Encodes miRNA and gene sequences using one-hot encoding, where each nucleotide is represented by a vector of length 4.
+    A = [1, 0, 0, 0]
+    U = [0, 1, 0, 0]
+    T = [0, 1, 0, 0]
+    G = [0, 0, 1, 0]
+    C = [0, 0, 0, 1]
+    N = [0, 0, 0, 0]
+    miRNA and gene sequences are concatenated and padded to 110 nt. Padding is done with "N" nucleotide. If the sequence is longer than 110 nt, it is truncated.
+    Returns numpy array with shape (num_of_samples, 110, 4).
+    """
 
     def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
         self.miRNA_col = miRNA_col
         self.gene_col = gene_col
         self.x_cast = {"A":[1,0,0,0],"U":[0,1,0,0],\
-            "T":[0,1,0,0],"G":[0,0,1,0],\
-            "C":[0,0,0,1],"N":[0,0,0,0]}
+                       "T":[0,1,0,0],"G":[0,0,1,0],\
+                       "C":[0,0,0,1],"N":[0,0,0,0]}
 
     def __call__(self, df):
         return self.prepare_data(df, self.miRNA_col, self.gene_col)
-
-    # function: randomly select bases for padding without 4 continuous nt pairing with miRNA sequence 
-    def selected_padding(self, merged_seq):
-        merged_seq_len = len(merged_seq)
-        SEQ_LEN = 110
-        head_seq = merged_seq[0:10]
-        head_reverse_complement = reverse_complement(head_seq)
-        
-        head_reverse_complement = head_reverse_complement.replace("U","T")
-        while True:
-            flag = 0
-            padding_seq = ""
-            for i in range(SEQ_LEN-merged_seq_len):
-                temp_base = random.choice("ATGC")
-                padding_seq += temp_base
-            if len(padding_seq) < 4:
-                break
-            for j in range(len(padding_seq)-4):
-                if head_reverse_complement.find(padding_seq[j:j+4]) >= 0:
-                    flag = 1
-                    break
-            if flag ==0:
-                break
-        return padding_seq
-
 
     # function: padding all the miRNA_target_seq to 110 nt and vectorize with one-hot encoding
     def transform_xdata(self, column):
@@ -123,15 +137,8 @@ class cnnMirTargetEncoder():
             line = line.strip()
             line = line.replace("X","")   # remove "X" in the sequence
             line = line.upper()   # upper case
-            # padding sequence to SEQ_LEN
-            padding_seq = self.selected_padding(line)   # padding with no-4-pairing sequence
-            # padding_seq = "N"*(110-len(line))    # padding with "N"
-            line = line + padding_seq
-            # vectorization
-            temp_list = []
-            for base in line:
-                temp_list.append(self.x_cast[base])
-            x_dataset.append(temp_list)
+
+            x_dataset.append([self.x_cast[base] for base in line])
         return x_dataset
 
     # function: calculate the result based on the model
@@ -149,20 +156,36 @@ class cnnMirTargetEncoder():
 
         # vectorization
         merged_seq_vector = self.transform_xdata(miRNA_target_seq) 
-
         merged_seq_vector_array = np.array(merged_seq_vector)
 
         return merged_seq_vector_array
 
 class TargetNetEncoder():
-    def __init__(self, miRNA_col="noncodingRNA", gene_col="gene", with_esa=True):
-        self.miRNA_col = miRNA_col
-        self.gene_col = gene_col
-        self.with_esa = with_esa
+    """
+    Based on Min, Seonwoo, Byunghan Lee, and Sungroh Yoon. "TargetNet: functional microRNA target prediction with deep neural networks." Bioinformatics 38.3 (2022): 671-677. https://doi.org/10.1093/bioinformatics/btab733.
+    Python implementation: https://github.com/seonwoo-min/TargetNet
+
+    Encodes extended seed alignemt of miRNA and gene sequences using one-hot encoding, where each nucleotide is represented by a vector of length 5.
+    A = [1, 0, 0, 0, 0]
+    C = [0, 1, 0, 0, 0]
+    G = [0, 0, 1, 0, 0]
+    U = [0, 0, 0, 1, 0]
+    T = [0, 0, 0, 1, 0]
+    - = [0, 0, 0, 0, 1]
+    First, gene sequence is truncated to 40nt nad miRNA sequence is reversed to be in 5' to 3' direction.
+    Then, miRNA extended seed (nucleotides 1-10) and gene (nucleotides 6-15) sequences are aligned using global alignment.
+    The scoring matrix for the alignment is defined to produce a score of 1 for WC and wobble pairings, and a score of 0 for the other pairings and gaps
+    The aligned sequences are encoded using one-hot encoding, producing a 2D matrix with shape (10, 50), where the first 5 rows represent gene and the last 5 rows represent miRNA.
+    First 5 columns represent first 5 nucletides from gene, followed by one-hot-encoding of extended seed alignment, and one-hot-encoding of position-wise concatenation of rest of the gene and miRNA sequences.
+    Matrix is padded with zeros to have shape (10, 50).
+    Returns PyTorch DataLoader with defined batch_size.
+    """
+    
+    def __init__(self):
         self.score_matrix = self.get_score_matrix()
 
-    def __call__(self, df):
-        return self.prepare_dataset(df, self.miRNA_col, self.gene_col, self.with_esa)
+    def __call__(self, df, miRNA_col="noncodingRNA", gene_col="gene", batch_size=64, shuffle=False):
+        return self.prepare_dataset(df, miRNA_col, gene_col, batch_size, shuffle)
 
     def get_score_matrix(self):
         score_matrix = {}  # Allow wobble
@@ -177,7 +200,7 @@ class TargetNetEncoder():
 
         return score_matrix
 
-    def encode_RNA(mirna_seq, mirna_esa, cts_rev_seq, cts_rev_esa, with_esa):
+    def encode_RNA(self, mirna_seq, mirna_esa, cts_rev_seq, cts_rev_esa, with_esa):
         """ one-hot encoder for RNA sequences with/without extended seed alignments """
         chars = {"A":0, "C":1, "G":2, "U":3}
         if not with_esa:
@@ -210,14 +233,14 @@ class TargetNetEncoder():
         esa_score = alignment[2]
         return mi_esa, cts_r_esa, esa_score
 
-    def prepare_dataset(self, df, miRNA_col, gene_col, with_esa = True):
+    def prepare_dataset(self, df, miRNA_col, gene_col, batch_size=64, shuffle=False, with_esa = True):
 
         X = []
 
         for _, row in df.iterrows():
 
-            mirna_seq = row[miRNA_col].upper().replace("T", "U")
-            mrna_seq = row[gene_col].upper().replace("T", "U")[:40]
+            mirna_seq = reverse(row[miRNA_col].upper().replace("T", "U"))
+            mrna_seq = row[gene_col].upper().replace("T", "U")[0:40]
 
             # align miRNA seed region with mRNA
             mirna_esa, cts_rev_esa, _ = self.extended_seed_alignment(mirna_seq, mrna_seq)
@@ -226,7 +249,7 @@ class TargetNetEncoder():
                                                     mrna_seq, cts_rev_esa, with_esa)))
 
         dataset = TargetNetEncoder.miRNA_CTS_dataset(X)
-        dataloader = torch.utils.data.DataLoader(dataset, batch_size=64, shuffle=False)
+        dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
         return dataloader
     
@@ -242,6 +265,22 @@ class TargetNetEncoder():
             return self.X[i]
 
 class TargetScanCnnEncoder():
+    """
+    Based on McGeary, Sean E., et al. "The biochemical basis of microRNA targeting efficacy." Science 366.6472 (2019): eaav1741. https://doi.org/10.1126/science.aav1741.
+    Python implementation: https://github.com/kslin/miRNA_models/tree/master
+
+    Encodes miRNA and gene sequences as outer product of one-hot-encoded first 10 nucleotides of miRNA and 12 nucleotides of gene.
+    A = [1, 0, 0, 0]
+    U = [0, 1, 0, 0]
+    T = [0, 1, 0, 0]
+    C = [0, 0, 1, 0]
+    G = [0, 0, 0, 1]
+    X = [0.25, 0.25, 0.25, 0.25]
+    First 10 nucleotides of miRNA are one-hot-encoded and flattened to 40-element vector.
+    Then, for each 12-nucleotide substring of gene, outer product of miRNA and gene one-hot-encoded sequences is calculated.
+    These 40x48 are stacked for each 12-nucleotide substring of gene.
+    Returns numpy array with shape (num_of_samples, number_of_12_substrings_in_gene, 40, 48).
+    """
     def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
         self.miRNA_col = miRNA_col
         self.gene_col = gene_col
@@ -271,9 +310,9 @@ class TargetScanCnnEncoder():
         
         for seq_id in range(len(df)):
             input_data = []
+            mirseq_one_hot = self.one_hot_encode(df.iloc[seq_id][miRNA_column][:10])
             for sub_seq in [df.iloc[seq_id][gene_column][i:i+12] for i in range(len(df.iloc[seq_id][gene_column])-11)]:
-                seq_one_hot = self.one_hot_encode(sub_seq)
-                mirseq_one_hot = self.one_hot_encode(df.iloc[seq_id][miRNA_column][:10])
+                seq_one_hot = self.one_hot_encode(sub_seq)      
                 input_data.append(np.outer(mirseq_one_hot, seq_one_hot))
 
             input_data = np.stack(input_data)
@@ -282,15 +321,23 @@ class TargetScanCnnEncoder():
         return data
 
 class YangAttentionEncoder():
-    def __init__(self, miRNA_col="noncodingRNA", gene_col="gene", device="cpu"):
-        self.miRNA_col = miRNA_col
-        self.gene_col = gene_col
-        self.device = device
+    """
+    Based on Yang, Tzu-Hsien, et al. "Identifying Human miRNA Target Sites via Learning the Interaction Patterns between miRNA and mRNA Segments." Journal of Chemical Information and Modeling (2023). https://doi.org/10.1021/acs.jcim.3c01150.
+    Python implementation: http://cosbi2.ee.ncku.edu.tw/mirna_binding/download
 
-    def __call__(self, df):
-        return self.data_preprocessing(df, self.miRNA_col, self.gene_col, self.device)
+    Encodes first 30 nucleotides of miRNA padded with "L" to the length of 30 and first 40 nucleotides of gene as one-hot-encoded sequences.
+    A = [1, 0, 0, 0]
+    U = [0, 1, 0, 0]
+    T = [0, 1, 0, 0]
+    C = [0, 0, 1, 0]
+    G = [0, 0, 0, 1]
+    L = [0, 0, 0, 0]
+    Returns PyTorch DataLoader with defined batch_size.
+    """
+    def __call__(self, df, miRNA_col="noncodingRNA", gene_col="gene", device="cpu", batch_size=256, shuffle=False):
+        return self.data_preprocessing(df, miRNA_col, gene_col, device, batch_size, shuffle)
 
-    def data_preprocessing(self, df, miRNA_col, gene_col, device, batch_size=256, drop_last=False, shuffle=False):
+    def data_preprocessing(self, df, miRNA_col, gene_col, device, batch_size, shuffle, drop_last=False):
 
         onehot = {'A':[1,0,0,0],
                 'T':[0,1,0,0],
@@ -318,6 +365,13 @@ class YangAttentionEncoder():
         return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle, drop_last=drop_last)
         
 class SeedEncoder():
+    """
+    Based on McGeary, Sean E., et al. "MicroRNA 3′-compensatory pairing occurs through two binding modes, with affinity shaped by nucleotide identity and position." Elife 11 (2022): e69803. https://doi.org/10.7554/eLife.69803.
+    Python implementation: None, made from scratch
+
+    Encodes miRNA and gene sequences as an array of [miRNA, reverse_complement(gene)] pairs.
+    Returns array of [miRNA, reverse_complement(gene)] pairs.
+    """
     def __init__(self, miRNA_col="noncodingRNA", gene_col="gene"):
         self.miRNA_col = miRNA_col
         self.gene_col = gene_col
@@ -326,6 +380,9 @@ class SeedEncoder():
         # return array of [miRNA, reverse_complement(gene)] pairs
         return df.apply(lambda x: [x[self.miRNA_col], reverse_complement(x[self.gene_col])], axis=1)
 
-def reverse_complement(self, st):
+def reverse_complement(st):
     nn = {'A': 'T', 'C': 'G', 'G': 'C', 'T': 'A'}
     return "".join(nn[n] for n in reversed(st))    
+
+def reverse(seq):
+    return seq[::-1]
