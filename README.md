@@ -1,22 +1,11 @@
 # miRNA target site prediction Benchmarks
 
-## Clone repo
+## Installation
 
 ```bash
 git clone https://github.com/katarinagresova/miRBench.git
-```
-
-## Setup conda environment
-
-Use prepared script to create conda environment with all necessary dependencies:
-```bash
-. prepare_conda.sh
-```
-
-## Install package
-
-```bash
-pip install -e .
+cd miRBench
+pip install .
 ```
 
 ## Examples

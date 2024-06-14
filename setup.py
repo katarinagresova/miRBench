@@ -16,4 +16,14 @@ setup(
     url="https://github.com/katarinagresova/miRBench",
     packages=find_packages("src"),
     package_dir={"": "src"},
+    install_requires=[
+        "biopython>=1.79",
+        #"requests>=2.23.0",
+        #"pip>=20.0.1",
+        "numpy>=1.17.0",
+        "pandas>=1.1.4",
+        "viennarna>=2.4.14",
+        'tensorflow>=2.6.0',
+        'torch>=1.9.0',
+    ],
 )
