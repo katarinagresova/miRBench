@@ -44,23 +44,23 @@ Data will be downloaded to `$HOME / ".miRBench" / "datasets"` directory, under s
 miRBench.predictor.list_predictors()
 ```
 ```python
-['cnnMirTarget',
+['CnnMirTarget_Zheng2020',
  'RNACofold',
- 'HejretMirnaCnn',
- 'miRBind',
- 'TargetNet',
+ 'miRNA_CNN_Hejret2023',
+ 'miRBind_Klimentova2022',
+ 'TargetNet_Min2021',
  'Seed8mer',
  'Seed7mer',
  'Seed6mer',
  'Seed6merBulgeOrMismatch',
- 'TargetScanCnn',
- 'YangAttention']
+ 'TargetScanCnn_McGeary2019',
+ 'InteractionAwareModel_Yang2024']
 ```
 
 ### Encode dataset
 
 ```python
-tool = 'miRBind'
+tool = 'miRBind_Klimentova2022'
 encoder = miRBench.encoders.get_encoder(tool)
 
 input = encoder(df)
