@@ -16,25 +16,25 @@ CACHE_PATH = Path.home() / ".miRBench" / "models"
 MODEL_FILE_NAME = "model.h5"
 
 def list_predictors():
-    return ["cnnMirTarget", 
+    return ["CnnMirTarget_Zheng2020", 
            "RNACofold", 
-           "HejretMirnaCnn", 
-           "miRBind", 
-           "TargetNet", 
+           "miRNA_CNN_Hejret2023", 
+           "miRBind_Klimentova2022", 
+           "TargetNet_Min2021", 
            "Seed8mer", "Seed7mer", "Seed6mer", "Seed6merBulgeOrMismatch", 
-           "TargetScanCnn" , 
-           "YangAttention"]
+           "TargetScanCnn_McGeary2019", 
+           "InteractionAwareModel_Yang2024"]
 
 def get_predictor(predictor_name):
-    if predictor_name == "cnnMirTarget":
-        return cnnMirTarget()
+    if predictor_name == "CnnMirTarget_Zheng2020":
+        return CnnMirTarget()
     elif predictor_name == "RNACofold":
         return RNACofold()
-    elif predictor_name == "HejretMirnaCnn":
+    elif predictor_name == "miRNA_CNN_Hejret2023":
         return HejretMirnaCnn()
-    elif predictor_name == "miRBind":
+    elif predictor_name == "miRBind_Klimentova2022":
         return miRBind()
-    elif predictor_name == "TargetNet":
+    elif predictor_name == "TargetNet_Min2021":
         return TargetNet()
     elif predictor_name == "Seed8mer":
         return Seed8mer()
@@ -44,10 +44,10 @@ def get_predictor(predictor_name):
         return Seed6mer()
     elif predictor_name == "Seed6merBulgeOrMismatch":
         return Seed6merBulgeOrMismatch()
-    elif predictor_name == "TargetScanCnn":
+    elif predictor_name == "TargetScanCnn_McGeary2019":
         return TargetScanCnn()
-    elif predictor_name == "YangAttention":
-        return YangAttention()
+    elif predictor_name == "InteractionAwareModel_Yang2024":
+        return InteractionAwareModel()
     else:
         raise ValueError(f"Unknown predictor name: {predictor_name}")
 
@@ -57,8 +57,11 @@ class Predictor():
     
     def predict(self, data, **kwargs):
         raise NotImplementedError()
+    
+    def get_predictor_name(self):
+        raise NotImplementedError()
 
-class cnnMirTarget(Predictor):
+class CnnMirTarget(Predictor):
     """
     Based on Zheng, Xueming, et al. "Prediction of miRNA targets by learning from interaction sequences." Plos one 15.5 (2020): e0232578. https://doi.org/10.1371%2Fjournal.pone.0232578
     Python implementation: https://github.com/zhengxueming/cnnMirTarget
@@ -67,7 +70,9 @@ class cnnMirTarget(Predictor):
     Returns a list of probabilities.
     """
     def __init__(self):
-        self.model = get_model("cnnMirTarget")
+        self.predictor_name = "CnnMirTarget_Zheng2020"
+        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/cnnMirTarget/cnn_model_preTrained.h5'
+        self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
         return self.model.predict(data, **kwargs)
@@ -92,7 +97,9 @@ class HejretMirnaCnn(Predictor):
     Returns a list of probabilities.
     """
     def __init__(self):
-        self.model = get_model("HejretMirnaCnn")
+        self.predictor_name = "miRNA_CNN_Hejret2023"
+        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Hejret_miRNA_CNN/model_miRNA.h5'
+        self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
         return self.model.predict(data, **kwargs)
@@ -106,7 +113,9 @@ class miRBind(Predictor):
     Returns a list of probabilities.
     """
     def __init__(self):
-        self.model = get_model("miRBind")
+        self.predictor_name = "miRBind_Klimentova2022"
+        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBind/miRBind.h5'
+        self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
         return self.model.predict(data, **kwargs)[:, 1]
@@ -175,6 +184,8 @@ class TargetNet(Predictor):
     Returns a list of probabilities, conatenated for all batches.
     """
     def __init__(self):
+        self.predictor_name = "TargetNet_Min2021"
+        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetNet/TargetNet.pt'
         self.model = self.prepare_model()
 
     def predict(self, data, device = "cpu"):
@@ -211,9 +222,9 @@ class TargetNet(Predictor):
 
     def prepare_model(self):
 
-        model_path = Path(CACHE_PATH / "TargetNet" / "model.pt")
+        model_path = Path(CACHE_PATH / self.predictor_name / "model.pt")
         if not model_path.exists():
-            download_model("TargetNet", model_path)
+            download_model(self.predictor_name, self.model_url, model_path)
 
         model_cfg = TargetNet.ModelConfig({
             'skip_connection': True,
@@ -471,6 +482,7 @@ class TargetScanCnn(Predictor):
     Returns a list of relative KD values.
     """
     def __init__(self):
+        self.predictor_name = "TargetScanCnn_McGeary2019"
         self.model_path = self.prepare_model()
 
     def predict(self, data):
@@ -502,7 +514,7 @@ class TargetScanCnn(Predictor):
 
     def prepare_model(self):
 
-        model_path = Path(CACHE_PATH / "TargetScanCnn")
+        model_path = Path(CACHE_PATH / self.predictor_name)
         if not model_path.exists():
             model_path.mkdir(parents=True)
 
@@ -515,7 +527,7 @@ class TargetScanCnn(Predictor):
 
         return model_path
 
-class YangAttention(Predictor):
+class InteractionAwareModel(Predictor):
     """
     Based on Yang, Tzu-Hsien, et al. "Identifying Human miRNA Target Sites via Learning the Interaction Patterns between miRNA and mRNA Segments." Journal of Chemical Information and Modeling (2023). https://doi.org/10.1021/acs.jcim.3c01150.
     Python implementation: http://cosbi2.ee.ncku.edu.tw/mirna_binding/download
@@ -524,13 +536,16 @@ class YangAttention(Predictor):
     Returns a list of probabilities.
     """
     def __init__(self):
+
+        self.predictor_name = "InteractionAwareModel_Yang2024"
+        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Yang_Attention/attention_model.pkl'
         
         self.miRNA_MAXLEN = 30
         self.mRNA_MAXLEN = 40
         self.RNA = list('ATCG')
         self.MODEL_TYPE = 'attention'
         
-        self.model = self.prepare_model("YangAttention")
+        self.model = self.prepare_model()
 
     def predict(self, data, device = "cpu"):
         self.model.to(device)
@@ -545,10 +560,10 @@ class YangAttention(Predictor):
         preds = np.array(preds) 
         return preds
     
-    def prepare_model(self, model_name):
-        model_path = Path(CACHE_PATH / model_name / "model.pkl")
+    def prepare_model(self):
+        model_path = Path(CACHE_PATH / self.predictor_name / "model.pkl")
         if not model_path.exists():
-            download_model(model_name, model_path)
+            download_model(self.predictor_name, self.model_url, model_path)
 
         model = self.BaseLine7(
                 emb_dim=len(self.RNA), 
@@ -568,7 +583,7 @@ class YangAttention(Predictor):
     
     class FELayer(nn.Module):
         def __init__(self, layer_infos, last_norm=True, norm_type='batch', bias=True):
-            super(YangAttention.FELayer, self).__init__()
+            super(InteractionAwareModel.FELayer, self).__init__()
             
             self.linear_layers = nn.Sequential()
             for idx, li in enumerate(layer_infos):
@@ -584,7 +599,7 @@ class YangAttention(Predictor):
 
     class SEblock(nn.Module):
         def __init__(self, channels, reduction=4):
-            super(YangAttention.SEblock, self).__init__()
+            super(InteractionAwareModel.SEblock, self).__init__()
             self.avg_pool = nn.AdaptiveAvgPool1d(1)
             self.fc1 = nn.Linear(channels, channels//reduction)
             self.relu = nn.PReLU()
@@ -611,13 +626,13 @@ class YangAttention(Predictor):
 
     class SELayer(nn.Module):
         def __init__(self, in_channels, out_channels, kernel_size, stride=1, reduction=4, add_residual=False, res_dim=16):
-            super(YangAttention.SELayer, self).__init__()
+            super(InteractionAwareModel.SELayer, self).__init__()
             self.conv = nn.Conv1d(in_channels=in_channels, out_channels=out_channels,
                                 kernel_size=kernel_size, stride=stride, padding=(kernel_size//2))
             
             self.bn1 = nn.BatchNorm1d(out_channels)
             self.relu = nn.PReLU()
-            self.se = YangAttention.SEblock(channels=out_channels, reduction=reduction)#ChannelAttentionBlock()#
+            self.se = InteractionAwareModel.SEblock(channels=out_channels, reduction=reduction)#ChannelAttentionBlock()#
             
             if add_residual:
                 self.conv2 = nn.Conv1d(in_channels=res_dim, out_channels=out_channels, kernel_size=1)
@@ -638,7 +653,7 @@ class YangAttention(Predictor):
 
     class BaseLine7(nn.Module):
         def __init__(self, emb_dim=4, cnn_dim=16, kernel=5, se_reduction=4, cnn_dropout=0.3, mrna_len=31, pirna_len=21, nhead=4, transformer_dropout=0.5, cls_dropout=0.5):
-            super(YangAttention.BaseLine7, self).__init__()
+            super(InteractionAwareModel.BaseLine7, self).__init__()
             
             #super(BaseLine7, self).__init__()
             self.mrna_len = mrna_len
@@ -653,9 +668,9 @@ class YangAttention(Predictor):
             self.cls_dropout = cls_dropout
             
             # Feature Extraction
-            self.mrna_conv = YangAttention.SELayer(emb_dim, cnn_dim, kernel, stride=1, reduction=se_reduction)
+            self.mrna_conv = InteractionAwareModel.SELayer(emb_dim, cnn_dim, kernel, stride=1, reduction=se_reduction)
             self.mrna_dropout = nn.Dropout(cnn_dropout)
-            self.pirna_conv = YangAttention.SELayer(emb_dim, cnn_dim, kernel, stride=1, reduction=se_reduction)
+            self.pirna_conv = InteractionAwareModel.SELayer(emb_dim, cnn_dim, kernel, stride=1, reduction=se_reduction)
             self.pirna_dropout = nn.Dropout(cnn_dropout)
             
             # Transformer Decoder
@@ -675,7 +690,7 @@ class YangAttention(Predictor):
             # Classification
             self.dropout4 = nn.Dropout(cls_dropout)
             self.cls_input_dim = self.d_model*mrna_len
-            self.cls_layer = YangAttention.FELayer([
+            self.cls_layer = InteractionAwareModel.FELayer([
                 [self.cls_input_dim, 1024, cls_dropout],
                 [1024, 256, cls_dropout],
                 [256, 2]
@@ -708,35 +723,22 @@ class YangAttention(Predictor):
             
             return out
 
-def get_model(model_name, force_download = False):
+def get_model(model_name, model_url, force_download = False):
 
     local_path = Path(CACHE_PATH / model_name / MODEL_FILE_NAME)
     if not local_path.exists() or force_download:
-        download_model(model_name, local_path)
+        download_model(model_name, model_url, local_path)
 
     model = k.models.load_model(local_path)
     
     return model
 
-def download_model(model_name, local_path):
-
-    if model_name == "cnnMirTarget":
-        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/cnnMirTarget/cnn_model_preTrained.h5'
-    elif model_name == "miRBind":
-        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBind/miRBind.h5'
-    elif model_name == "HejretMirnaCnn":
-        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Hejret_miRNA_CNN/model_miRNA.h5'
-    elif model_name == "TargetNet":
-        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetNet/TargetNet.pt'
-    elif model_name == "YangAttention":
-        url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Yang_Attention/attention_model.pkl'
-    else:
-        raise ValueError("Unknown model name")
+def download_model(model_name, model_url, local_path):
 
     model_dir_path = Path(CACHE_PATH / model_name)
     if not model_dir_path.exists():
         model_dir_path.mkdir(parents=True)
 
-    urllib.request.urlretrieve(url, local_path)
+    urllib.request.urlretrieve(model_url, local_path)
 
         

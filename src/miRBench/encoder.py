@@ -7,17 +7,17 @@ from torch.utils.data import TensorDataset, DataLoader
 random.seed(42)
 
 def get_encoder(model_name):
-    if model_name == "HejretMirnaCnn":
+    if model_name == "miRNA_CNN_Hejret2023":
         return HejretMirnaCnnEncoder()
-    elif model_name == "cnnMirTarget":
+    elif model_name == "CnnMirTarget_Zheng2020":
         return cnnMirTargetEncoder()
-    elif model_name == "TargetNet":
+    elif model_name == "TargetNet_Min2021":
         return TargetNetEncoder()
-    elif model_name == "TargetScanCnn":
+    elif model_name == "TargetScanCnn_McGeary2019":
         return TargetScanCnnEncoder()
-    elif model_name == "YangAttention":
-        return YangAttentionEncoder()
-    elif model_name == "miRBind":
+    elif model_name == "InteractionAwareModel_Yang2024":
+        return InteractionAwareModelEncoder()
+    elif model_name == "miRBind_Klimentova2022":
         return miRBindEncoder()
     elif model_name == "Seed8mer":
         return SeedEncoder()
@@ -312,7 +312,7 @@ class TargetScanCnnEncoder():
 
         return data
 
-class YangAttentionEncoder():
+class InteractionAwareModelEncoder():
     """
     Based on Yang, Tzu-Hsien, et al. "Identifying Human miRNA Target Sites via Learning the Interaction Patterns between miRNA and mRNA Segments." Journal of Chemical Information and Modeling (2023). https://doi.org/10.1021/acs.jcim.3c01150.
     Python implementation: http://cosbi2.ee.ncku.edu.tw/mirna_binding/download
