@@ -49,23 +49,13 @@ def get_dataset(dataset_name, ratio, split, force_download = False):
 
     local_path = Path(CACHE_PATH / dataset_name / ratio / split / DATASET_FILE)
     if not local_path.exists() or force_download:
-        print(f"Downloading {dataset_name} dataset, ratio {ratio}, split {split}")
+        print(f"Downloading {dataset_name} dataset, ratio {ratio}, split {split} into {local_path}")
         download_dataset(dataset_name, local_path, ratio, split)
+    else:
+        print(f"Using cached dataset {local_path}")
 
     dataset = pd.read_csv(local_path, sep="\t")
     return dataset
-
-def get_dataset_path(dataset_name, ratio, split, force_download = False):
-    """
-    Get dataset path from cache or download it if not present
-    """
-
-    local_path = Path(CACHE_PATH / dataset_name / ratio / split / DATASET_FILE)
-    if not local_path.exists() or force_download:
-        print(f"Downloading {dataset_name} dataset, ratio {ratio}, split {split}")
-        download_dataset(dataset_name, local_path, ratio, split)
-
-    return local_path
 
 def download_dataset(dataset_name, download_path, ratio, split):
 
@@ -84,3 +74,4 @@ def download_dataset(dataset_name, download_path, ratio, split):
         data_dir.mkdir(parents=True)
 
     urllib.request.urlretrieve(url, download_path)
+    return download_path
