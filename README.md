@@ -17,13 +17,15 @@ miRBench.dataset.list_datasets()
 ```
 
 ```python
-['Hejret2023']
+['AGO2_CLASH_Hejret2023',
+ 'AGO2_eCLIP_Klimentova2022',
+ 'AGO2_eCLIP_Manakov2022']
 ```
 
 ### Get dataset
 
 ```python
-dataset_name = "Hejret2023"
+dataset_name = "AGO2_CLASH_Hejret2023"
 df = miRBench.dataset.get_dataset(dataset_name, split="test", ratio="1")
 df.head()
 ```
