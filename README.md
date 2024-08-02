@@ -22,6 +22,24 @@ miRBench.dataset.list_datasets()
  'AGO2_eCLIP_Manakov2022']
 ```
 
+Not all datasets are available with all splits and ratios. To get available splits and ratios, use the `full` option.
+
+```python
+miRBench.dataset.list_datasets(full=True)
+```
+
+```python
+{'AGO2_CLASH_Hejret2023': {'splits': {
+      'train': {'ratios': ['10']},
+      'test': {'ratios': ['1', '10', '100']}}},
+ 'AGO2_eCLIP_Klimentova2022': {'splits': {
+      'test': {'ratios': ['1', '10', '100']}}},
+ 'AGO2_eCLIP_Manakov2022': {'splits': {
+      'train': {'ratios': ['1', '10', '100']},
+      'test': {'ratios': ['1', '10', '100']}}}
+}
+```
+
 ### Get dataset
 
 ```python
