@@ -3,7 +3,7 @@
 ## Installation
 
 ```bash
-pip install git+https://github.com/katarinagresova/miRBench.git
+pip install miRBench
 ```
 
 ## Examples
