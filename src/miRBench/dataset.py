@@ -1,6 +1,7 @@
 import urllib.request
 import pandas as pd
 from pathlib import Path
+import os
 
 CACHE_PATH = Path.home() / ".miRBench" / "datasets"
 DATASET_FILE = "dataset.tsv"
@@ -69,9 +70,20 @@ def download_dataset(dataset_name, download_path, ratio, split):
 
     url = f'https://zenodo.org/records/13166445/files/{dataset_name}_{ratio}_{split}_dataset.tsv?download=1'
     
-    data_dir = download_path.parent
+    
+    data_dir = Path(download_path)
+    #data_dir = download_path.parent
+
+    file_path = Path(os.path.join(download_path, f"{dataset_name}_{ratio}_{split}_dataset.tsv"))
+
     if not data_dir.exists():
         data_dir.mkdir(parents=True)
 
-    urllib.request.urlretrieve(url, download_path)
-    return download_path
+    if file_path.exists():
+        print(f"Dataset {dataset_name} already exists at {file_path}. Using existing dataset file.")
+    else: 
+        print(f"Downloading {dataset_name}_{ratio}_{split}_dataset.tsv to {data_dir}.")
+        urllib.request.urlretrieve(url, file_path)
+
+    #urllib.request.urlretrieve(url, download_path)
+    return data_dir
