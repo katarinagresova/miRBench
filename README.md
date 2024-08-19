@@ -81,7 +81,7 @@ miRBench.predictor.list_predictors()
 
 ```python
 tool = 'miRBind_Klimentova2022'
-encoder = miRBench.encoders.get_encoder(tool)
+encoder = miRBench.encoder.get_encoder(tool)
 
 input = encoder(df)
 ```
@@ -89,7 +89,7 @@ input = encoder(df)
 ### Get predictions
 
 ```python
-predictor = miRBench.predictors.get_predictor(tool)
+predictor = miRBench.predictor.get_predictor(tool)
 
 predictions = predictor(input)
 predictions[:10]
