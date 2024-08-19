@@ -44,7 +44,7 @@ miRBench.dataset.list_datasets(full=True)
 
 ```python
 dataset_name = "AGO2_CLASH_Hejret2023"
-df = miRBench.dataset.get_dataset(dataset_name, split="test", ratio="1")
+df = miRBench.dataset.get_dataset_df(dataset_name, split="test", ratio="1")
 df.head()
 ```
 
