@@ -167,7 +167,7 @@ class TargetNetEncoder():
     U = [0, 0, 0, 1, 0]
     T = [0, 0, 0, 1, 0]
     - = [0, 0, 0, 0, 1]
-    First, gene sequence is truncated to 40nt and reversed.
+    First, gene sequence is truncated to 40nt and reversed to be in 3' to 5' direction.
     Then, miRNA extended seed (nucleotides 1-10) and gene (nucleotides 6-15) sequences are aligned using global alignment.
     The scoring matrix for the alignment is defined to produce a score of 1 for WC and wobble pairings, and a score of 0 for the other pairings and gaps
     The aligned sequences are encoded using one-hot encoding, producing a 2D matrix with shape (10, 50), where the first 5 rows represent gene and the last 5 rows represent miRNA.
