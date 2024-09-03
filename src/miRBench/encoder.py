@@ -167,7 +167,7 @@ class TargetNetEncoder():
     U = [0, 0, 0, 1, 0]
     T = [0, 0, 0, 1, 0]
     - = [0, 0, 0, 0, 1]
-    First, gene sequence is truncated to 40nt nad miRNA sequence is reversed to be in 5' to 3' direction.
+    First, gene sequence is truncated to 40nt and reversed to be in 3' to 5' direction.
     Then, miRNA extended seed (nucleotides 1-10) and gene (nucleotides 6-15) sequences are aligned using global alignment.
     The scoring matrix for the alignment is defined to produce a score of 1 for WC and wobble pairings, and a score of 0 for the other pairings and gaps
     The aligned sequences are encoded using one-hot encoding, producing a 2D matrix with shape (10, 50), where the first 5 rows represent gene and the last 5 rows represent miRNA.
@@ -234,8 +234,8 @@ class TargetNetEncoder():
 
         for _, row in df.iterrows():
 
-            mirna_seq = reverse(row[miRNA_col].upper().replace("T", "U"))
-            mrna_seq = row[gene_col].upper().replace("T", "U")[0:40]
+            mirna_seq = row[miRNA_col].upper().replace("T", "U")
+            mrna_seq = reverse(row[gene_col].upper().replace("T", "U")[0:40])
 
             # align miRNA seed region with mRNA
             mirna_esa, cts_rev_esa, _ = self.extended_seed_alignment(mirna_seq, mrna_seq)
