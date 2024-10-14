@@ -100,11 +100,3 @@ array([0.6899161 , 0.15220629, 0.07301956, 0.43757868, 0.34360734,
        0.20519172, 0.0955029 , 0.79298246, 0.14150576, 0.05329492],
       dtype=float32)
 ```
-
-## Benchmark all tools on all datasets
-
-```bash
-python benchmark_all.py OUTPUT_FOLDER_PATH
-```
-
-The script will run all tools on all datasets and will produce a file with suffix `_predictions.tsv` for each dataset. Predictions from every tool will be saved in separate columns.
