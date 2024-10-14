@@ -2,7 +2,8 @@ import urllib.request
 import pandas as pd
 from pathlib import Path
 
-CACHE_PATH = Path.home() / ".miRBench" / "datasets"
+ZENODO_RECORD_ID = "13909173"
+CACHE_PATH = Path.home() / ".miRBench" / "datasets" / ZENODO_RECORD_ID
 DATASET_FILE = "dataset.tsv"
 
 def list_datasets(full=False):
@@ -83,7 +84,7 @@ def download_dataset(dataset_name, download_path, ratio, split):
     if ratio not in available_datasets[dataset_name]["splits"][split]["ratios"]:
         raise ValueError(f"Ratio {ratio} not found for split {split} of dataset {dataset_name}")
 
-    url = f'https://zenodo.org/records/13909173/files/{dataset_name}_{ratio}_{split}_dataset.tsv?download=1'
+    url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/{dataset_name}_{ratio}_{split}_dataset.tsv?download=1'
     
     data_dir = Path(download_path).parent
 
