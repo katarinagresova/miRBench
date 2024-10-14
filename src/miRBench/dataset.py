@@ -83,7 +83,7 @@ def download_dataset(dataset_name, download_path, ratio, split):
     if ratio not in available_datasets[dataset_name]["splits"][split]["ratios"]:
         raise ValueError(f"Ratio {ratio} not found for split {split} of dataset {dataset_name}")
 
-    url = f'https://zenodo.org/records/13166445/files/{dataset_name}_{ratio}_{split}_dataset.tsv?download=1'
+    url = f'https://zenodo.org/records/13909173/files/{dataset_name}_{ratio}_{split}_dataset.tsv?download=1'
     
     data_dir = Path(download_path).parent
 
