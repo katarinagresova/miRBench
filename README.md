@@ -2,9 +2,34 @@
 
 ## Installation
 
+miRBench package can be easily installed using pip:
+
 ```bash
 pip install miRBench
 ```
+
+Default installation allows access to the datasets. To use predictors and encoders, you need to install additional dependencies.
+
+### Dependencies for predictors and encoders
+
+To use miRBench with predictors and encoders, install the following dependencies:
+- numpy
+- biopython
+- viennarna
+- torch
+- tensorflow
+- typing-extensions
+
+To install the miRBench package with all dependencies into a virtual environment, you can use the following commands:
+
+```bash
+python3.8 -m venv mirbench_venv
+source mirbench_venv/bin/activate
+pip install miRBench
+pip install numpy==1.24.3 biopython==1.83 viennarna==2.7.0 torch==1.9.0 tensorflow==2.13.1 typing-extensions==4.5.0
+```
+
+Note: This instalation is for running predictors on the CPU. If you want to use GPU, you need to install version of torch and tensorflow with GPU support.
 
 ## Examples
 
