@@ -11,9 +11,9 @@ pip install miRBench
 ### Get all available datasets
 
 ```python
-import miRBench
+from miRBench.dataset import list_datasets
 
-miRBench.dataset.list_datasets()
+list_datasets()
 ```
 
 ```python
@@ -25,7 +25,7 @@ miRBench.dataset.list_datasets()
 Not all datasets are available with all splits and ratios. To get available splits and ratios, use the `full` option.
 
 ```python
-miRBench.dataset.list_datasets(full=True)
+list_datasets(full=True)
 ```
 
 ```python
@@ -43,8 +43,10 @@ miRBench.dataset.list_datasets(full=True)
 ### Get dataset
 
 ```python
+from miRBench.dataset import get_dataset_df
+
 dataset_name = "AGO2_CLASH_Hejret2023"
-df = miRBench.dataset.get_dataset_df(dataset_name, split="test", ratio="1")
+df = get_dataset_df(dataset_name, split="test", ratio="1")
 df.head()
 ```
 
@@ -56,12 +58,25 @@ df.head()
 | 3 |	TGAGGGGCAGAGAGCGAGACTTT	|CAGAACTGGGATTCAAGCGAGGTCTGGCCCCTCAGTCTGTGGCTTT...	| 1 |
 | 4	 |CAAAGTGCTGTTCGTGCAGGTAG	|TTTTTTCCCTTAGGACTCTGCACTTTATAGAATGTTGTAAAACAGA...	| 1 |
 
-Data will be downloaded to `$HOME / ".miRBench" / "datasets"` directory, under separate subdirectories for each dataset.
+If you want to get just a path to the dataset, use the `get_dataset_path` function:
+
+```python
+from miRBench.dataset import get_dataset_path
+
+dataset_path = get_dataset_path(dataset_name, split="test", ratio="1")
+dataset_path
+```
+
+```python
+/home/user/.miRBench/datasets/13909173/AGO2_CLASH_Hejret2023/1/test/dataset.tsv
+```
 
 ### Get all available tools
 
 ```python
-miRBench.predictor.list_predictors()
+from miRBench.predictor import list_predictors
+
+list_predictors()
 ```
 ```python
 ['CnnMirTarget_Zheng2020',
@@ -80,8 +95,10 @@ miRBench.predictor.list_predictors()
 ### Encode dataset
 
 ```python
+from miRBench.encoder import get_encoder
+
 tool = 'miRBind_Klimentova2022'
-encoder = miRBench.encoder.get_encoder(tool)
+encoder = get_encoder(tool)
 
 input = encoder(df)
 ```
@@ -89,7 +106,9 @@ input = encoder(df)
 ### Get predictions
 
 ```python
-predictor = miRBench.predictor.get_predictor(tool)
+from miRBench.predictor import get_predictor
+
+predictor = get_predictor(tool)
 
 predictions = predictor(input)
 predictions[:10]
