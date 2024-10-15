@@ -17,11 +17,7 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     install_requires=[
-        "biopython>=1.79",
-        "viennarna>=2.4.14",
-        'torch>=1.9.0',
-        'tensorflow==2.13.1',
-        'numpy==1.24.3',
-        'pandas==2.0.3',
+        "numpy>=1.17.0,<2.0",
+        "pandas>=1.1.4",
     ],
 )
