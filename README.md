@@ -2,18 +2,43 @@
 
 ## Installation
 
+miRBench package can be easily installed using pip:
+
 ```bash
 pip install miRBench
 ```
+
+Default installation allows access to the datasets. To use predictors and encoders, you need to install additional dependencies.
+
+### Dependencies for predictors and encoders
+
+To use miRBench with predictors and encoders, install the following dependencies:
+- numpy
+- biopython
+- viennarna
+- torch
+- tensorflow
+- typing-extensions
+
+To install the miRBench package with all dependencies into a virtual environment, you can use the following commands:
+
+```bash
+python3.8 -m venv mirbench_venv
+source mirbench_venv/bin/activate
+pip install miRBench
+pip install numpy==1.24.3 biopython==1.83 viennarna==2.7.0 torch==1.9.0 tensorflow==2.13.1 typing-extensions==4.5.0
+```
+
+Note: This instalation is for running predictors on the CPU. If you want to use GPU, you need to install version of torch and tensorflow with GPU support.
 
 ## Examples
 
 ### Get all available datasets
 
 ```python
-import miRBench
+from miRBench.dataset import list_datasets
 
-miRBench.dataset.list_datasets()
+list_datasets()
 ```
 
 ```python
@@ -25,7 +50,7 @@ miRBench.dataset.list_datasets()
 Not all datasets are available with all splits and ratios. To get available splits and ratios, use the `full` option.
 
 ```python
-miRBench.dataset.list_datasets(full=True)
+list_datasets(full=True)
 ```
 
 ```python
@@ -43,8 +68,10 @@ miRBench.dataset.list_datasets(full=True)
 ### Get dataset
 
 ```python
+from miRBench.dataset import get_dataset_df
+
 dataset_name = "AGO2_CLASH_Hejret2023"
-df = miRBench.dataset.get_dataset_df(dataset_name, split="test", ratio="1")
+df = get_dataset_df(dataset_name, split="test", ratio="1")
 df.head()
 ```
 
@@ -56,12 +83,25 @@ df.head()
 | 3 |	TGAGGGGCAGAGAGCGAGACTTT	|CAGAACTGGGATTCAAGCGAGGTCTGGCCCCTCAGTCTGTGGCTTT...	| 1 |
 | 4	 |CAAAGTGCTGTTCGTGCAGGTAG	|TTTTTTCCCTTAGGACTCTGCACTTTATAGAATGTTGTAAAACAGA...	| 1 |
 
-Data will be downloaded to `$HOME / ".miRBench" / "datasets"` directory, under separate subdirectories for each dataset.
+If you want to get just a path to the dataset, use the `get_dataset_path` function:
+
+```python
+from miRBench.dataset import get_dataset_path
+
+dataset_path = get_dataset_path(dataset_name, split="test", ratio="1")
+dataset_path
+```
+
+```python
+/home/user/.miRBench/datasets/13909173/AGO2_CLASH_Hejret2023/1/test/dataset.tsv
+```
 
 ### Get all available tools
 
 ```python
-miRBench.predictor.list_predictors()
+from miRBench.predictor import list_predictors
+
+list_predictors()
 ```
 ```python
 ['CnnMirTarget_Zheng2020',
@@ -80,8 +120,10 @@ miRBench.predictor.list_predictors()
 ### Encode dataset
 
 ```python
+from miRBench.encoder import get_encoder
+
 tool = 'miRBind_Klimentova2022'
-encoder = miRBench.encoder.get_encoder(tool)
+encoder = get_encoder(tool)
 
 input = encoder(df)
 ```
@@ -89,7 +131,9 @@ input = encoder(df)
 ### Get predictions
 
 ```python
-predictor = miRBench.predictor.get_predictor(tool)
+from miRBench.predictor import get_predictor
+
+predictor = get_predictor(tool)
 
 predictions = predictor(input)
 predictions[:10]
@@ -100,11 +144,3 @@ array([0.6899161 , 0.15220629, 0.07301956, 0.43757868, 0.34360734,
        0.20519172, 0.0955029 , 0.79298246, 0.14150576, 0.05329492],
       dtype=float32)
 ```
-
-## Benchmark all tools on all datasets
-
-```bash
-python benchmark_all.py OUTPUT_FOLDER_PATH
-```
-
-The script will run all tools on all datasets and will produce a file with suffix `_predictions.tsv` for each dataset. Predictions from every tool will be saved in separate columns.
