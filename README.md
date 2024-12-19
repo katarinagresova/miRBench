@@ -51,22 +51,16 @@ list_datasets()
  'AGO2_eCLIP_Manakov2022']
 ```
 
-Not all datasets are available with all splits and ratios. To get available splits and ratios, use the `full` option.
+Not all datasets are available with all splits and ratios. To get available splits, use the `full` option.
 
 ```python
 list_datasets(full=True)
 ```
 
 ```python
-{'AGO2_CLASH_Hejret2023': {'splits': {
-      'train': {'ratios': ['10']},
-      'test': {'ratios': ['1', '10', '100']}}},
- 'AGO2_eCLIP_Klimentova2022': {'splits': {
-      'test': {'ratios': ['1', '10', '100']}}},
- 'AGO2_eCLIP_Manakov2022': {'splits': {
-      'train': {'ratios': ['1', '10', '100']},
-      'test': {'ratios': ['1', '10', '100']}}}
-}
+{'AGO2_CLASH_Hejret2023': {'splits': ['train', 'test']},
+ 'AGO2_eCLIP_Klimentova2022': {'splits': ['test']},
+ 'AGO2_eCLIP_Manakov2022': {'splits': ['train', 'test', 'leftout']}}
 ```
 
 ### Get dataset
@@ -75,29 +69,29 @@ list_datasets(full=True)
 from miRBench.dataset import get_dataset_df
 
 dataset_name = "AGO2_CLASH_Hejret2023"
-df = get_dataset_df(dataset_name, split="test", ratio="1")
+df = get_dataset_df(dataset_name, split="test")
 df.head()
 ```
 
-|	| noncodingRNA	| gene |	label |
-| -------- | ------- | ------- | ------- |
-| 0 |	TCCGAGCCTGGGTCTCCCTCTT	 |GGGTTTAGGGAAGGAGGTTCGGAGACAGGGAGCCAAGGCCTCTGTC... |	1 |
-|1 |	TGCGGGGCTAGGGCTAACAGCA	|GCTTCCCAAGTTAGGTTAGTGATGTGAAATGCTCCTGTCCCTGGCC...	| 1 |
-| 2 |	CCCACTGCCCCAGGTGCTGCTGG	|TCTTTCCAAAATTGTCCAGCAGCTTGAATGAGGCAGTGACAATTCT...	| 1 |
-| 3 |	TGAGGGGCAGAGAGCGAGACTTT	|CAGAACTGGGATTCAAGCGAGGTCTGGCCCCTCAGTCTGTGGCTTT...	| 1 |
-| 4	 |CAAAGTGCTGTTCGTGCAGGTAG	|TTTTTTCCCTTAGGACTCTGCACTTTATAGAATGTTGTAAAACAGA...	| 1 |
+|	| gene	| noncodingRNA	| noncodingRNA_name	| noncodingRNA_fam	| feature	| label	| chr	| start	| end	| strand	| gene_cluster_ID |
+| -------- | ------- | ------- | ------- | -------- | ------- | ------- | ------- | -------- | ------- | ------- | ------- |
+|0	|AAAGCTGTGGAACGCTACCTCTTCCTTTGAG...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|212100882	|212100931	|+	|2391|
+|1	|TCACCTCAGACTCTGTCCAACCTCTGCCTCA...	|TGAGGTAGTAGGTTGTGTGGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|35913919	|35913968	|+	|3972|
+|2	|TTATATGTGCCCAGTGTGGCAAAACCTTCAA...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|42851209	|42851258	|+	|222|
+|3	|TGAGGCCCTCTTCCTGCTCGTCACCTCCGTC...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|43961210	|43961259	|+	|1253|
+|4	|ATAAAATTTACGTTTTTAACTATACAATCTAC...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|intron	|1	|1	|244661046	|244661095	|+	|1252|
 
 If you want to get just a path to the dataset, use the `get_dataset_path` function:
 
 ```python
 from miRBench.dataset import get_dataset_path
 
-dataset_path = get_dataset_path(dataset_name, split="test", ratio="1")
+dataset_path = get_dataset_path(dataset_name, split="test")
 dataset_path
 ```
 
 ```python
-/home/user/.miRBench/datasets/13909173/AGO2_CLASH_Hejret2023/1/test/dataset.tsv
+/home/user/.miRBench/datasets/14501607/AGO2_CLASH_Hejret2023/test/dataset.tsv
 ```
 
 ### Get all available tools
