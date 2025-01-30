@@ -1,9 +1,5 @@
 # miRNA target site prediction Benchmarks
 
-## Warning
-
-Package is under development and datasets will change as there were discovered biases in them. 
-
 ## Installation
 
 miRBench package can be easily installed using pip:
