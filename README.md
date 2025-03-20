@@ -35,6 +35,8 @@ Note: This instalation is for running predictors on the CPU. If you want to use 
 
 ### Get all available datasets
 
+The dataset module is responsible for access to the benchmark datasets described in the [miRBench paper](https://doi.org/10.1101/2024.11.14.623628).
+
 ```python
 from miRBench.dataset import list_datasets
 
@@ -47,7 +49,7 @@ list_datasets()
  'AGO2_eCLIP_Manakov2022']
 ```
 
-Not all datasets are available with all splits and ratios. To get available splits, use the `full` option.
+Not all datasets are available with all splits. To get available splits, use the `full` option.
 
 ```python
 list_datasets(full=True)
@@ -113,6 +115,8 @@ list_predictors()
 
 ### Encode dataset
 
+The encoder module is responsible for encoding data into the format expected by a predictor module. The main function of the module is `get_encoder(predictor_name)` which returns an instance of an encoder object implemented for a specified predictor. The encoder expects data as a Pandas DataFrame with columns named ‘noncodingRNA’ and ‘gene’. Specifying custom column names is possible when calling the encoder. The returned data format differs for every encoder and is specific to the predictor.
+
 ```python
 from miRBench.encoder import get_encoder
 
@@ -123,6 +127,8 @@ input = encoder(df)
 ```
 
 ### Get predictions
+
+The predictor module is responsible for predicting miRNA-binding site interaction. The main function of the module is `get_predictor(predictor_name)` which returns an instance of a specified predictor object. The predictor object expects data encoded by a corresponding encoder and returns an array of predictions.
 
 ```python
 from miRBench.predictor import get_predictor
@@ -138,3 +144,9 @@ array([0.6899161 , 0.15220629, 0.07301956, 0.43757868, 0.34360734,
        0.20519172, 0.0955029 , 0.79298246, 0.14150576, 0.05329492],
       dtype=float32)
 ```
+
+## Citing miRBench
+
+If you use miRBench in your research, please cite the following article:
+
+Sammut, Stephanie, et al. [miRBench: novel benchmark datasets for microRNA binding site prediction that mitigate against prevalent microRNA Frequency Class Bias.](https://doi.org/10.1101/2024.11.14.623628) bioRxiv (2025): 2025-01.
