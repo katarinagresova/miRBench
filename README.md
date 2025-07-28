@@ -149,4 +149,4 @@ array([0.6899161 , 0.15220629, 0.07301956, 0.43757868, 0.34360734,
 
 If you use miRBench in your research, please cite the following article:
 
-Sammut, Stephanie, et al. [miRBench: novel benchmark datasets for microRNA binding site prediction that mitigate against prevalent microRNA Frequency Class Bias.](https://doi.org/10.1101/2024.11.14.623628) bioRxiv (2025): 2025-01.
+Sammut, Stephanie, et al. [miRBench: novel benchmark datasets for microRNA binding site prediction that mitigate against prevalent microRNA frequency class bias.](https://doi.org/10.1093/bioinformatics/btaf233) Bioinformatics 41.Supplement_1 (2025): i542-i551.
