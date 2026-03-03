@@ -31,7 +31,7 @@ def get_encoder(model_name):
         return RNACofoldEncoder()
     elif model_name == "miRBenchCNN_Manakov":
         return miRBenchCNN_ManakovEncoder()
-    elif model_name == "miRBenchCNN_HejretCorrectedEncoder":
+    elif model_name == "miRBenchCNN_HejretCorrected":
         return miRBenchCNN_HejretCorrectedEncoder()
     else:
         raise ValueError(f"Model {model_name} not found")

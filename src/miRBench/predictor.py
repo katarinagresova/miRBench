@@ -1,6 +1,7 @@
 import RNA
 from pathlib import Path
 import urllib.request
+from urllib.parse import urlparse
 import tensorflow as tf
 from tensorflow import keras as k
 from tensorflow.keras import layers
@@ -765,7 +766,8 @@ class InteractionAwareModel(Predictor):
 
 def get_model(model_name, model_url, force_download = False):
 
-    local_path = Path(CACHE_PATH / model_name / MODEL_FILE_NAME)
+    filename = Path(urlparse(model_url).path).name or MODEL_FILE_NAME
+    local_path = Path(CACHE_PATH / model_name / filename)
     if not local_path.exists() or force_download:
         download_model(model_name, model_url, local_path)
 
@@ -780,5 +782,3 @@ def download_model(model_name, model_url, local_path):
         model_dir_path.mkdir(parents=True)
 
     urllib.request.urlretrieve(model_url, local_path)
-
-        
