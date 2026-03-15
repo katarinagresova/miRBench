@@ -29,6 +29,10 @@ def get_encoder(model_name):
         return SeedEncoder()
     elif model_name == "RNACofold":
         return RNACofoldEncoder()
+    elif model_name == "miRBenchCNN_Manakov":
+        return miRBenchCNN_ManakovEncoder()
+    elif model_name == "miRBenchCNN_HejretCorrected":
+        return miRBenchCNN_HejretCorrectedEncoder()
     else:
         raise ValueError(f"Model {model_name} not found")
 
@@ -92,6 +96,32 @@ class HejretMirnaCnnEncoder(miRBindEncoder):
     """
     Based on Hejret, Vaclav, et al. "Analysis of chimeric reads characterises the diverse targetome of AGO2-mediated regulation." Scientific Reports 13.1 (2023): 22895. https://doi.org/10.1038/s41598-023-49757-z.
     Python implementation: https://github.com/ML-Bioinfo-CEITEC/HybriDetector/tree/main
+
+    Uses the same encoding as miRBindEncoder.
+    Encodes miRNA and gene sequences into 2D-binding matrix.
+    2D-binding matrix has shape (gene_max_len, miRNA_max_len, 1) and contains 1 for Watson-Crick interactions and 0 otherwise.
+    Returns array with shape (num_of_samples, gene_max_len, miRNA_max_len, 1).
+    """
+    def __init__(self):
+        super().__init__()
+
+class miRBenchCNN_ManakovEncoder(miRBindEncoder):
+    """
+    Based on Sammut, Gresova et al. "miRBench: novel benchmark datasets for microRNA binding site prediction that mitigate against prevalent microRNA frequency class bias." Bioinformatics, Volume 41, Issue Supplement_1, July 2025, Pages i542–i551. https://doi.org/10.1093/bioinformatics/btaf233.
+    Python implementation: https://github.com/BioGeMT/miRBench_paper
+
+    Uses the same encoding as miRBindEncoder.
+    Encodes miRNA and gene sequences into 2D-binding matrix.
+    2D-binding matrix has shape (gene_max_len, miRNA_max_len, 1) and contains 1 for Watson-Crick interactions and 0 otherwise.
+    Returns array with shape (num_of_samples, gene_max_len, miRNA_max_len, 1).
+    """
+    def __init__(self):
+        super().__init__()
+
+class miRBenchCNN_HejretCorrectedEncoder(miRBindEncoder):
+    """
+    Based on Sammut, Gresova et al. "miRBench: novel benchmark datasets for microRNA binding site prediction that mitigate against prevalent microRNA frequency class bias." Bioinformatics, Volume 41, Issue Supplement_1, July 2025, Pages i542–i551. https://doi.org/10.1093/bioinformatics/btaf233.
+    Python implementation: https://github.com/BioGeMT/miRBench_paper
 
     Uses the same encoding as miRBindEncoder.
     Encodes miRNA and gene sequences into 2D-binding matrix.
