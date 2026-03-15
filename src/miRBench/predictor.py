@@ -1,6 +1,7 @@
 import RNA
 from pathlib import Path
 import urllib.request
+from urllib.parse import urlparse
 import tensorflow as tf
 from tensorflow import keras as k
 from tensorflow.keras import layers
@@ -23,7 +24,9 @@ def list_predictors():
            "TargetNet_Min2021", 
            "Seed8mer", "Seed7mer", "Seed6mer", "Seed6merBulgeOrMismatch", 
            "TargetScanCnn_McGeary2019", 
-           "InteractionAwareModel_Yang2024"]
+           "InteractionAwareModel_Yang2024",
+           "miRBenchCNN_Manakov",
+           "miRBenchCNN_HejretCorrected"]
 
 def get_predictor(predictor_name):
     if predictor_name == "CnnMirTarget_Zheng2020":
@@ -48,6 +51,10 @@ def get_predictor(predictor_name):
         return TargetScanCnn()
     elif predictor_name == "InteractionAwareModel_Yang2024":
         return InteractionAwareModel()
+    elif predictor_name == "miRBenchCNN_Manakov":
+        return miRBenchCNN_Manakov()
+    elif predictor_name == "miRBenchCNN_HejretCorrected":
+        return miRBenchCNN_HejretCorrected()
     else:
         raise ValueError(f"Unknown predictor name: {predictor_name}")
 
@@ -99,6 +106,40 @@ class HejretMirnaCnn(Predictor):
     def __init__(self):
         self.predictor_name = "miRNA_CNN_Hejret2023"
         self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Hejret_miRNA_CNN/model_miRNA.h5'
+        self.model = get_model(self.predictor_name, self.model_url)
+
+    def predict(self, data, **kwargs):
+        return self.model.predict(data, **kwargs)
+    
+class miRBenchCNN_Manakov(Predictor):
+    """
+    Based on Sammut, Gresova et al. "miRBench: novel benchmark datasets for microRNA binding site prediction that mitigate against prevalent microRNA frequency class bias." Bioinformatics, Volume 41, Issue Supplement_1, July 2025, Pages i542–i551. https://doi.org/10.1093/bioinformatics/btaf233.
+    Python implementation: https://github.com/BioGeMT/miRBench_paper
+    Model: https://zenodo.org/records/16022731
+
+    Predicts the probability of a miRNA-mRNA interaction.
+    Returns a list of probabilities.
+    """
+    def __init__(self):
+        self.predictor_name = "miRBenchCNN_Manakov"
+        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBenchCNN_Manakov/CNN_Manakov_full.keras'
+        self.model = get_model(self.predictor_name, self.model_url)
+
+    def predict(self, data, **kwargs):
+        return self.model.predict(data, **kwargs)
+    
+class miRBenchCNN_HejretCorrected(Predictor):
+    """
+    Based on Sammut, Gresova et al. "miRBench: novel benchmark datasets for microRNA binding site prediction that mitigate against prevalent microRNA frequency class bias." Bioinformatics, Volume 41, Issue Supplement_1, July 2025, Pages i542–i551. https://doi.org/10.1093/bioinformatics/btaf233.
+    Python implementation: https://github.com/BioGeMT/miRBench_paper
+    Model: https://zenodo.org/records/16022731
+    
+    Predicts the probability of a miRNA-mRNA interaction.
+    Returns a list of probabilities.
+    """
+    def __init__(self):
+        self.predictor_name = "miRBenchCNN_HejretCorrected"
+        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBenchCNN_HejretCorrected/CNN_Hejret_full.keras'
         self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
@@ -725,7 +766,8 @@ class InteractionAwareModel(Predictor):
 
 def get_model(model_name, model_url, force_download = False):
 
-    local_path = Path(CACHE_PATH / model_name / MODEL_FILE_NAME)
+    filename = Path(urlparse(model_url).path).name or MODEL_FILE_NAME
+    local_path = Path(CACHE_PATH / model_name / filename)
     if not local_path.exists() or force_download:
         download_model(model_name, model_url, local_path)
 
@@ -740,5 +782,3 @@ def download_model(model_name, model_url, local_path):
         model_dir_path.mkdir(parents=True)
 
     urllib.request.urlretrieve(model_url, local_path)
-
-        

@@ -110,7 +110,9 @@ list_predictors()
  'Seed6mer',
  'Seed6merBulgeOrMismatch',
  'TargetScanCnn_McGeary2019',
- 'InteractionAwareModel_Yang2024']
+ 'InteractionAwareModel_Yang2024',
+ 'miRBenchCNN_Manakov',
+ 'miRBenchCNN_HejretCorrected']
 ```
 
 ### Encode dataset
