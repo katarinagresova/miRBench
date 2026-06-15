@@ -4,7 +4,7 @@ from pathlib import Path
 import gzip
 import shutil
 
-ZENODO_RECORD_ID = "14501607"
+ZENODO_RECORD_ID = "20540907"
 CACHE_PATH = Path.home() / ".miRBench" / "datasets" / ZENODO_RECORD_ID
 DATASET_FILE = "dataset.tsv"
 
