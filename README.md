@@ -29,11 +29,11 @@ pip install miRBench
 pip install numpy==1.24.3 biopython==1.83 viennarna==2.7.0 torch==1.9.0 tensorflow==2.13.1 typing-extensions==4.5.0
 ```
 
-Note: This instalation is for running predictors on the CPU. If you want to use GPU, you need to install version of torch and tensorflow with GPU support.
+Note: This installation is for running predictors on the CPU. If you want to use GPU, you need to install version of torch and tensorflow with GPU support.
 
 ## Examples
 
-### Get all available datasets
+### List all available datasets
 
 The dataset module is responsible for access to the benchmark datasets described in the [miRBench paper](https://doi.org/10.1101/2024.11.14.623628).
 
@@ -89,10 +89,10 @@ dataset_path
 ```
 
 ```python
-/home/user/.miRBench/datasets/14501607/AGO2_CLASH_Hejret2023/test/dataset.tsv
+/home/user/.miRBench/datasets/20540907/AGO2_CLASH_Hejret2023/test/dataset.tsv
 ```
 
-### Get all available tools
+### List all available tools
 
 ```python
 from miRBench.predictor import list_predictors
@@ -117,7 +117,7 @@ list_predictors()
 
 ### Encode dataset
 
-The encoder module is responsible for encoding data into the format expected by a predictor module. The main function of the module is `get_encoder(predictor_name)` which returns an instance of an encoder object implemented for a specified predictor. The encoder expects data as a Pandas DataFrame with columns named ‘noncodingRNA’ and ‘gene’. Specifying custom column names is possible when calling the encoder. The returned data format differs for every encoder and is specific to the predictor.
+The encoder module is responsible for encoding data into the format expected by a predictor module. The main function of the module is `get_encoder(predictor_name)` which returns an instance of an encoder object implemented for a specified predictor. The encoder expects data as a Pandas DataFrame with columns named `noncodingRNA` and `gene`. Specifying custom column names is possible when calling the encoder. The returned data format differs for every encoder and is specific to the predictor.
 
 ```python
 from miRBench.encoder import get_encoder
@@ -130,7 +130,7 @@ input = encoder(df)
 
 ### Get predictions
 
-The predictor module is responsible for predicting miRNA-binding site interaction. The main function of the module is `get_predictor(predictor_name)` which returns an instance of a specified predictor object. The predictor object expects data encoded by a corresponding encoder and returns an array of predictions.
+The predictor module is responsible for predicting miRNA-binding site interaction. The main function of the module is `get_predictor(predictor_name)` which downloads the specified predictor to `/home/user/.miRBench/models/20612339/<predictor_name>/<predictor_file>` and returns an instance of the predictor object. The predictor object expects data encoded by a corresponding encoder and returns an array of predictions.
 
 ```python
 from miRBench.predictor import get_predictor
