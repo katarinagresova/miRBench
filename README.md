@@ -71,13 +71,15 @@ df = get_dataset_df(dataset_name, split="test")
 df.head()
 ```
 
-|	| gene	| noncodingRNA	| noncodingRNA_name	| noncodingRNA_fam	| feature	| label	| chr	| start	| end	| strand	| gene_cluster_ID |
-| -------- | ------- | ------- | ------- | -------- | ------- | ------- | ------- | -------- | ------- | ------- | ------- |
-|0	|AAAGCTGTGGAACGCTACCTCTTCCTTTGAG...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|212100882	|212100931	|+	|2391|
-|1	|TCACCTCAGACTCTGTCCAACCTCTGCCTCA...	|TGAGGTAGTAGGTTGTGTGGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|35913919	|35913968	|+	|3972|
-|2	|TTATATGTGCCCAGTGTGGCAAAACCTTCAA...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|42851209	|42851258	|+	|222|
-|3	|TGAGGCCCTCTTCCTGCTCGTCACCTCCGTC...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|exon	|1	|1	|43961210	|43961259	|+	|1253|
-|4	|ATAAAATTTACGTTTTTAACTATACAATCTAC...	|TGAGGTAGTAGGTTGTATAGTT	|hsa-let-7a-5p	|let-7	|intron	|1	|1	|244661046	|244661095	|+	|1252|
+|	| gene	| noncodingRNA	| label |
+| -------- | ------- | ------- | ------- |
+|0	|AGATATGTATTCAGCTTGTCTTCAAATACGGCCAAGCAGAAAATGTTTTA	|CACTGCATTCCTGCTTGGCCCAG	|1|
+|1	|ATTCCTTGGGGGATGGTTTGGGCCGAATGGGGAGTGGAATATTTGACATT	|CACTGCATTCCTGCTTGGCCCAG	|1|
+|2	|TGAATCAACCCACAGAACCCCCTCCTAAACCCGTTTTCCCACCCACTGCT	|TTGGAGGCGTGGGTTTT	|1|
+|3	|GGAGTCTGGAGTCAAACCCAGAGCAGCTGCAGGCCATGAGGCACATTGTT	|AAAGCAAATGTTGGGTGAACGGC	|0|
+|4	|CAGCTGTGTACAGCGCCATCTCTCTGCCTTCTGTTGCCCCTCACTCACCA	|AATAGCTCAGAATGTCAGTTCTG	|0|
+
+Depending on the dataset version, additional annotation columns may be provided (e.g. genomic coordinates, transcript features, conservation scores, etc). These columns are useful for downstream analyses but are not required for model inference.
 
 If you want to get just a path to the dataset, use the `get_dataset_path` function:
 
