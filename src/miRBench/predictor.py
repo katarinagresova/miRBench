@@ -13,7 +13,8 @@ import numpy as np
 import sys
 from collections import OrderedDict
 
-CACHE_PATH = Path.home() / ".miRBench" / "models"
+ZENODO_RECORD_ID = "20612339"
+CACHE_PATH = Path.home() / ".miRBench" / "models" / ZENODO_RECORD_ID
 MODEL_FILE_NAME = "model.h5"
 
 def list_predictors():
@@ -78,7 +79,7 @@ class CnnMirTarget(Predictor):
     """
     def __init__(self):
         self.predictor_name = "CnnMirTarget_Zheng2020"
-        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/cnnMirTarget/cnn_model_preTrained.h5'
+        self.model_url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/cnnMirTarget.h5?download=1'
         self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
@@ -105,7 +106,7 @@ class HejretMirnaCnn(Predictor):
     """
     def __init__(self):
         self.predictor_name = "miRNA_CNN_Hejret2023"
-        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Hejret_miRNA_CNN/model_miRNA.h5'
+        self.model_url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/miRNA_CNN_Hejret.h5?download=1'
         self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
@@ -122,7 +123,7 @@ class miRBenchCNN_Manakov(Predictor):
     """
     def __init__(self):
         self.predictor_name = "miRBenchCNN_Manakov"
-        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBenchCNN_Manakov/CNN_Manakov_full.keras'
+        self.model_url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/miRBenchCNN_Manakov_v7.keras?download=1'
         self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
@@ -139,7 +140,7 @@ class miRBenchCNN_HejretCorrected(Predictor):
     """
     def __init__(self):
         self.predictor_name = "miRBenchCNN_HejretCorrected"
-        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBenchCNN_HejretCorrected/CNN_Hejret_full.keras'
+        self.model_url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/miRBenchCNN_HejretCorrected_v7.keras?download=1'
         self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
@@ -155,7 +156,7 @@ class miRBind(Predictor):
     """
     def __init__(self):
         self.predictor_name = "miRBind_Klimentova2022"
-        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/miRBind/miRBind.h5'
+        self.model_url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/miRBind.h5?download=1'
         self.model = get_model(self.predictor_name, self.model_url)
 
     def predict(self, data, **kwargs):
@@ -226,7 +227,7 @@ class TargetNet(Predictor):
     """
     def __init__(self):
         self.predictor_name = "TargetNet_Min2021"
-        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetNet/TargetNet.pt'
+        self.model_url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/TargetNet.pt?download=1'
         self.model = self.prepare_model()
 
     def predict(self, data, device = "cpu"):
@@ -559,11 +560,11 @@ class TargetScanCnn(Predictor):
         if not model_path.exists():
             model_path.mkdir(parents=True)
 
-            url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetScan_CNN/model-100.data-00000-of-00001'
+            url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/TargetScanCnn_model-100.data-00000-of-00001?download=1'
             urllib.request.urlretrieve(url, Path(model_path / 'model-100.data-00000-of-00001'))
-            url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetScan_CNN/model-100.index'
+            url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/TargetScanCnn_model-100.index?download=1'
             urllib.request.urlretrieve(url, Path(model_path / 'model-100.index'))
-            url = 'https://github.com/katarinagresova/miRBench/raw/main/models/TargetScan_CNN/model-100.meta'
+            url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/TargetScanCnn_model-100.meta?download=1'
             urllib.request.urlretrieve(url, Path(model_path / 'model-100.meta'))
 
         return model_path
@@ -579,7 +580,7 @@ class InteractionAwareModel(Predictor):
     def __init__(self):
 
         self.predictor_name = "InteractionAwareModel_Yang2024"
-        self.model_url = 'https://github.com/katarinagresova/miRBench/raw/main/models/Yang_Attention/attention_model.pkl'
+        self.model_url = f'https://zenodo.org/records/{ZENODO_RECORD_ID}/files/InteractionAwareModel.pkl?download=1'
         
         self.miRNA_MAXLEN = 30
         self.mRNA_MAXLEN = 40
