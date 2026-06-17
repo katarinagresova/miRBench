@@ -149,21 +149,21 @@ array([0.6899161 , 0.15220629, 0.07301956, 0.43757868, 0.34360734,
       dtype=float32)
 ```
 
-## Leaderboard
+## Benchmarking results
 
-The following leaderboard reports the Average Precision Score (APS) of all available miRBench predictors evaluated on the official benchmark test sets. Higher APS values indicate better performance. See the miRBench paper for details on the datasets and evaluation protocol.
+The following table reports the Average Precision Score (APS) of all available miRBench predictors evaluated on the benchmark test sets. Higher APS values indicate better performance. See the miRBench paper for details on the datasets and evaluation protocol. Results may differ from those reported in the paper because the current benchmark uses datasets version 7, which includes quality-control improvements such as the removal of duplicate miRNA–target-site pairs within and across class labels.
 
-| Predictor | AGO2_CLASH_Hejret2023 (test) | AGO2_eCLIP_Klimentova2022 (test) | AGO2_eCLIP_Manakov2022 (test) | AGO2_eCLIP_Manakov2022 (leftout) |
+| Predictor | AGO2_eCLIP_Klimentova2022 (test) | AGO2_CLASH_Hejret2023 (test) | AGO2_eCLIP_Manakov2022 (test) | AGO2_eCLIP_Manakov2022 (leftout) |
 |------------|----------------------------:|---------------------------------:|------------------------------:|---------------------------------:|
-| miRBenchCNN_Manakov | 0.8694 | **0.8730** | **0.8699** | **0.8603** |
-| miRBenchCNN_HejretCorrected | **0.8878** | 0.8009 | 0.8073 | 0.8179 |
-| miRNA_CNN_Hejret2023 | 0.7949 | 0.7579 | 0.7310 | 0.7379 |
-| miRBind_Klimentova2022 | 0.7993 | 0.7769 | 0.7319 | 0.7448 |
-| TargetScanCnn_McGeary2019 | 0.7423 | 0.7873 | 0.8004 | 0.8066 |
-| TargetNet_Min2021 | 0.5533 | 0.5465 | 0.5762 | 0.5959 |
-| InteractionAwareModel_Yang2024 | 0.7412 | 0.7020 | 0.7117 | 0.6435 |
-| CnnMirTarget_Zheng2020 | 0.5109 | 0.5151 | 0.5264 | 0.5083 |
-| RNACofold | 0.7420 | 0.6847 | 0.6375 | 0.6691 |
+| miRBenchCNN_Manakov | **0.8730** | 0.8694 | **0.8699** | **0.8603** |
+| miRBenchCNN_HejretCorrected | 0.8009 | **0.8878** | 0.8073 | 0.8179 |
+| TargetScanCnn_McGeary2019 | 0.7873 | 0.7423 | 0.8004 | 0.8066 |
+| CnnMirTarget_Zheng2020 | 0.5151 | 0.5109 | 0.5264 | 0.5083 |
+| TargetNet_Min2021 | 0.5465 | 0.5533 | 0.5762 | 0.5959 |
+| miRBind_Klimentova2022 | 0.7769 | 0.7993 | 0.7319 | 0.7448 |
+| miRNA_CNN_Hejret2023 | 0.7579 | 0.7949 | 0.7310 | 0.7379 |
+| InteractionAwareModel_Yang2024 | 0.7020 | 0.7412 | 0.7117 | 0.6435 |
+| RNACofold | 0.6847 | 0.7420 | 0.6375 | 0.6691 |
 
 ## Citing miRBench
 
