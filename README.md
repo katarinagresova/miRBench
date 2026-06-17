@@ -164,6 +164,7 @@ The following table reports the Average Precision Score (APS) of all available m
 | miRNA_CNN_Hejret2023 | 0.7579 | 0.7949 | 0.7310 | 0.7379 |
 | InteractionAwareModel_Yang2024 | 0.7020 | 0.7412 | 0.7117 | 0.6435 |
 | RNACofold | 0.6847 | 0.7420 | 0.6375 | 0.6691 |
+| Random | 0.5338 | 0.5263 | 0.5149 | 0.5045 |
 
 ## Citing miRBench
 
