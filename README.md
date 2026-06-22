@@ -151,7 +151,7 @@ array([0.6899161 , 0.15220629, 0.07301956, 0.43757868, 0.34360734,
 
 ## Benchmarking results
 
-The following table reports the Average Precision Score (APS) of all available miRBench predictors evaluated on the benchmark test sets. Higher APS values indicate better performance. See the miRBench paper for details on the datasets and evaluation protocol. Results may differ from those reported in the paper because the current benchmark uses datasets version 7, which includes quality-control improvements such as the removal of duplicate miRNA–target-site pairs within and across class labels.
+The following table reports the Average Precision Score (APS) of all available miRBench predictors evaluated on the benchmark test sets. Higher APS values indicate better performance. See the miRBench paper for details on the datasets and evaluation protocol. Results may differ from those reported in the paper because the current benchmark uses datasets version 7, which includes quality-control improvements such as the removal of duplicate miRNA–target-site pairs within and across class labels. 
 
 | Predictor | AGO2_eCLIP_Klimentova2022 (test) | AGO2_CLASH_Hejret2023 (test) | AGO2_eCLIP_Manakov2022 (test) | AGO2_eCLIP_Manakov2022 (leftout) |
 |------------|----------------------------:|---------------------------------:|------------------------------:|---------------------------------:|
@@ -165,6 +165,12 @@ The following table reports the Average Precision Score (APS) of all available m
 | InteractionAwareModel_Yang2024 | 0.7020 | 0.7412 | 0.7117 | 0.6435 |
 | RNACofold | 0.6847 | 0.7420 | 0.6375 | 0.6691 |
 | Random | 0.5338 | 0.5263 | 0.5149 | 0.5045 |
+
+The figure below shows the precision–recall curves for all evaluated predictors on the benchmark test sets. 
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/BioGeMT/miRBench_paper/main/figures/PRcurves_miRBenchv7datasets.svg" alt="Precision–Recall curves for miRBench v7 datasets" width="1000">
+</p>
 
 ## Citing miRBench
 
