@@ -17,7 +17,21 @@ setup(
     packages=find_packages("src"),
     package_dir={"": "src"},
     install_requires=[
-        "numpy>=1.17.0,<2.0",
+        "numpy>=1.17.0",
         "pandas>=1.1.4",
     ],
+    extras_require={
+        # Dependencies of encoders and predictors. The miRBenchCNN models were saved by Keras 2.13,
+        # whose .keras files later Keras versions cannot load (TensorFlow 2.13 needs Python 3.8 - 3.11).
+        "models": ["biopython", "viennarna", "torch", "tensorflow~=2.13.0"],
+        # The exact versions the predictors were validated with (all have wheels for Python 3.9 only).
+        "exactmodels": [
+            "numpy==1.24.3",
+            "biopython==1.83",
+            "viennarna==2.7.0",
+            "torch==1.9.0",
+            "tensorflow==2.13.1",
+            "typing-extensions==4.5.0",
+        ],
+    },
 )
